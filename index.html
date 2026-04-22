@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastodon Fridge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #8ab4cc;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px 0;
+      font-family: sans-serif;
+    }
+
+    .fridge {
+      width: 315px;
+      overflow: hidden;
+    }
+
+    /* ══ TOP PANEL ══ */
+    .top-panel {
+      background: linear-gradient(155deg, #d5ecfa 0%, #c6e2f6 55%, #cde8fa 100%);
+      padding: 24px 18px 20px 18px;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .polaroid {
+      background: white;
+      padding: 6px 6px 26px 6px;
+      box-shadow: 3px 5px 18px rgba(0,0,0,0.28);
+      transform: rotate(-4deg);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .polaroid img {
+      display: block;
+      width: 124px;
+      height: 104px;
+      object-fit: cover;
+    }
+
+    .sticky-note {
+      background: #fef285;
+      padding: 15px 13px;
+      width: 146px;
+      height: 114px;
+      box-shadow: 3px 4px 14px rgba(0,0,0,0.22);
+      transform: rotate(1.5deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .sticky-note p {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      font-size: 15.5px;
+      line-height: 1.75;
+      color: #333;
+    }
+
+    /* ══ SHELF ══ */
+    .shelf {
+      height: 13px;
+      background: linear-gradient(180deg, #8abcd8 0%, #a2c8e0 50%, #b8d8f0 100%);
+    }
+
+    /* ══ BOTTOM PANEL ══ */
+    .bottom-panel {
+      background: linear-gradient(155deg, #d5ecfa 0%, #c6e2f6 55%, #cde8fa 100%);
+      padding: 10px 8px 16px 8px;
+      position: relative;   /* anchor for abs-positioned selfie */
+    }
+
+    /* Shared photo card */
+    .photo {
+      border-radius: 11px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 2px 4px 14px rgba(0,0,0,0.28);
+      flex-shrink: 0;
+    }
+    .photo img.main {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .avatar {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2.5px solid white;
+      overflow: hidden;
+      box-shadow: 1px 2px 5px rgba(0,0,0,0.32);
+    }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* ── Row 1: Dog + Landscape ── */
+    .row1 {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .photo-dog {
+      width: 143px;
+      height: 112px;
+      transform: rotate(-1deg);
+    }
+    .photo-landscape {
+      flex: 1;
+      height: 112px;
+      transform: rotate(1.5deg);
+    }
+
+    /* ── Man selfie: absolutely positioned, overlaps landscape bottom + row-2 ── */
+    .photo-selfie-glasses {
+      position: absolute;
+      right: 8px;
+      top: 74px;        /* 10px panel-top-pad + ~64px into landscape, lower overlap */
+      width: 88px;
+      height: 122px;
+      transform: rotate(1.5deg);
+      z-index: 3;
+    }
+
+    /* ── Row 2: Note + SMITHS ── */
+    .row2 {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 7px;
+      /* leave space for abs-positioned selfie on right */
+      padding-right: 92px;
+    }
+
+    .crumpled-note {
+      width: 68px;
+      height: 92px;
+      background: linear-gradient(148deg, #f5f3eb 0%, #e8e4d8 100%);
+      border-radius: 4px;
+      box-shadow: 2px 3px 10px rgba(0,0,0,0.22);
+      transform: rotate(-2.5deg);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .crumpled-note::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      top: 10px;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 12px,
+        rgba(150,150,175,0.28) 12px,
+        rgba(150,150,175,0.28) 13px
+      );
+    }
+    .crumpled-note::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 0 16px 16px;
+      border-color: transparent transparent #c0bbb0 transparent;
+    }
+
+    .smiths-wrap {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 0px;
+      padding-top: 28px; /* push letters down so they sit mid-note vertically */
+    }
+    .letter {
+      font-family: 'Arial Black', 'Arial Bold', Impact, sans-serif;
+      font-weight: 900;
+      font-size: 33px;
+      line-height: 1;
+      display: inline-block;
+    }
+    .ls  { color: #df1414; text-shadow: 0 4px 0 #750808, 0 2px 4px rgba(0,0,0,0.4); }
+    .lm  { color: #155fd4; text-shadow: 0 4px 0 #092d78, 0 2px 4px rgba(0,0,0,0.4); }
+    .li  { color: #13a02c; text-shadow: 0 4px 0 #094e15, 0 2px 4px rgba(0,0,0,0.4); }
+    .lt  { color: #e55800; text-shadow: 0 4px 0 #7a2800, 0 2px 4px rgba(0,0,0,0.4); }
+    .lh  { color: #155fd4; text-shadow: 0 4px 0 #092d78, 0 2px 4px rgba(0,0,0,0.4); }
+    .ls2 { color: #13a02c; text-shadow: 0 4px 0 #094e15, 0 2px 4px rgba(0,0,0,0.4); }
+
+    /* ── Row 3: Croissants ── */
+    .row3 {
+      display: flex;
+      margin-bottom: 6px;
+      margin-top: -6px;
+    }
+    .photo-croissants {
+      width: 172px;
+      height: 112px;
+      transform: rotate(0.7deg);
+    }
+
+    /* ── Row 4: Star + Cliff ── */
+    .row4 {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .star-sticker {
+      font-size: 50px;
+      line-height: 1;
+      color: #1fc04e;
+      filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.3));
+      flex-shrink: 0;
+      margin-bottom: 10px;
+    }
+
+    .photo-cliff {
+      flex: 1;
+      height: 134px;
+      transform: rotate(-1.5deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="fridge">
+
+    <!-- ══ TOP PANEL ══ -->
+    <div class="top-panel">
+      <div class="top-row">
+
+        <div class="polaroid">
+          <img src="https://placehold.co/124x104/9ecae8/3a5872?text=📸+Girls" alt="Girls photo">
+        </div>
+
+        <div class="sticky-note">
+          <p>Miss you!</p>
+          <p>Love, mom ❤️</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SHELF ══ -->
+    <div class="shelf"></div>
+
+    <!-- ══ BOTTOM PANEL ══ -->
+    <div class="bottom-panel">
+
+      <!-- Row 1: Dog + Landscape -->
+      <div class="row1">
+        <div class="photo photo-dog">
+          <img class="main" src="https://placehold.co/143x112/7ec87e/1e4820?text=🐕" alt="Dog">
+          <div class="avatar">
+            <img src="https://placehold.co/28x28/f8a0a0/781020?text=A" alt="">
+          </div>
+        </div>
+        <div class="photo photo-landscape">
+          <img class="main" src="https://placehold.co/152x112/78a8d0/182840?text=🌄" alt="Road">
+          <div class="avatar">
+            <img src="https://placehold.co/28x28/fcc080/7a4010?text=B" alt="">
+          </div>
+        </div>
+      </div>
+
+      <!-- Man selfie (absolutely positioned — overlaps landscape + row2) -->
+      <div class="photo photo-selfie-glasses">
+        <img class="main" src="https://placehold.co/88x122/b08050/503010?text=😎" alt="Selfie">
+        <div class="avatar">
+          <img src="https://placehold.co/28x28/a898f0/302070?text=C" alt="">
+        </div>
+      </div>
+
+      <!-- Row 2: Note + SMITHS (selfie is abs, so row2 pads right) -->
+      <div class="row2">
+        <div class="crumpled-note"></div>
+        <div class="smiths-wrap">
+          <span class="letter ls">S</span>
+          <span class="letter lm">M</span>
+          <span class="letter li">I</span>
+          <span class="letter lt">T</span>
+          <span class="letter lh">H</span>
+          <span class="letter ls2">S</span>
+        </div>
+      </div>
+
+      <!-- Row 3: Croissants -->
+      <div class="row3">
+        <div class="photo photo-croissants">
+          <img class="main" src="https://placehold.co/172x112/d89050/683010?text=🥐+Baked" alt="Croissants">
+          <div class="avatar">
+            <img src="https://placehold.co/28x28/c898e0/502060?text=D" alt="">
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Star + Cliff selfie -->
+      <div class="row4">
+        <div class="star-sticker">&#9733;</div>
+        <div class="photo photo-cliff">
+          <img class="main" src="https://placehold.co/200x134/4898a8/102030?text=🏔️+Cliff" alt="Cliff selfie">
+          <div class="avatar">
+            <img src="https://placehold.co/28x28/88d090/205028?text=E" alt="">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
