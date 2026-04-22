@@ -9,6 +9,12 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme';
 
+/**
+ * Bottom padding a scrolling screen should reserve so its last content
+ * clears the translucent tab bar (bar + protruding [+] + safe area).
+ */
+export const TAB_BAR_CLEARANCE = 96;
+
 const TAB_ICONS: Record<string, { focused: keyof typeof Ionicons.glyphMap; default: keyof typeof Ionicons.glyphMap }> = {
   Fridge: { focused: 'home', default: 'home-outline' },
   Market: { focused: 'compass', default: 'compass-outline' },

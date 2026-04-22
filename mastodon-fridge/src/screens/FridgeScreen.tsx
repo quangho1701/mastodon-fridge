@@ -1,32 +1,55 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../theme';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import {
+  FridgeCollage,
+  FridgeHeader,
+  FridgeSurface,
+} from '../components';
+import { TAB_BAR_CLEARANCE } from '../navigation/CustomTabBar';
+import { fridgeSeed } from '../data/fridgeSeed';
 
 export default function FridgeScreen() {
-  const { theme } = useTheme();
+  const handleMagnetPress = (id: string) => {
+    Alert.alert(
+      'Event',
+      `Would open event ${id} (Screen 6 — not built yet).`,
+    );
+  };
+
+  const handleSettings = () => {
+    Alert.alert('Settings', 'Profile & settings coming soon.');
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[theme.typography.h1, { color: theme.colors.textPrimary }]}>
-        My Fridge
-      </Text>
-      <Text
-        style={[
-          theme.typography.body,
-          { color: theme.colors.textSecondary, marginTop: theme.spacing.sm },
-        ]}
-      >
-        Nothing here yet. Your next step starts now.
-      </Text>
+    <View style={styles.root}>
+      <StatusBar style="light" />
+      <FridgeSurface />
+      <SafeAreaView edges={['top']} style={styles.safe}>
+        <FridgeHeader name="Quang" onSettingsPress={handleSettings} />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          removeClippedSubviews
+        >
+          <FridgeCollage items={fridgeSeed} onMagnetPress={handleMagnetPress} />
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
+  },
+  safe: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: TAB_BAR_CLEARANCE,
   },
 });
