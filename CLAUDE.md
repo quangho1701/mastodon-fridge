@@ -21,7 +21,7 @@ Mastodon Fridge is a mobile-first app for Purdue Fort Wayne (PFW) students that 
 
 ## Brand Rules
 
-- Always use "we" in microcopy to foster community.
-- Never abbreviate "Mastodons" to "Dons."
+- Prefer "we" in community-oriented microcopy, but it's a soft preference, not a strict rule.
+- "Dons" is acceptable wherever a playful, student-native register fits (welcome copy, empty states, marketing). Reserve "Mastodons" for official/identity moments.
 - Summit Gold (`#DAAA00`) is the action/interactive color; Golden (`#CFB991`) is for brand identity moments only.
 - Minimum touch target: 44x44px.

@@ -98,6 +98,6 @@ The app speaks as a supportive peer: purposeful, pragmatically optimistic, and i
 
 * **Success State:** "You're registered. See you there, Mastodon."
 * **Empty State:** "Nothing here yet. Your next step starts now."
-* **Language:** Always use "we" to foster community; never abbreviate "Mastodons" to "Dons."
+* **Language:** Prefer "we" in community-oriented microcopy (soft preference). "Dons" is acceptable wherever a playful, student-native register fits; reserve "Mastodons" for official or identity moments.
 
 ---
