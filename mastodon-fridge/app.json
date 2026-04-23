@@ -27,7 +27,19 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Mastodon Fridge to use your camera to scan event flyers."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Mastodon Fridge to access your photos so you can upload saved flyers."
+        }
+      ]
     ]
   }
 }
