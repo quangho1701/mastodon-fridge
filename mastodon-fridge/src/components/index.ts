@@ -10,3 +10,8 @@ export { default as Polaroid } from './Polaroid';
 export { default as Sticker } from './Sticker';
 export { default as Magnet } from './Magnet';
 export { default as FridgeCollage } from './FridgeCollage';
+export { default as FridgeShelves } from './FridgeShelves';
+export { default as ShelfDivider } from './ShelfDivider';
+export { default as LetterMagnet } from './LetterMagnet';
+export { default as CrumpledNote } from './CrumpledNote';
+export { default as PhotoCard } from './PhotoCard';

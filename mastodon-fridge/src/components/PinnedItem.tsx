@@ -81,7 +81,10 @@ export default function PinnedItem({
     }
   }, [theme.dark, shadowVariant]);
 
-  const baseTransform: ViewStyle['transform'] = [{ rotate: `${rotation}deg` }];
+  const effectiveRotation = reduceMotion ? 0 : rotation;
+  const baseTransform: ViewStyle['transform'] = [
+    { rotate: `${effectiveRotation}deg` },
+  ];
 
   const content = (
     <View style={styles.inner}>
@@ -116,7 +119,7 @@ export default function PinnedItem({
           {
             transform:
               pressed && !reduceMotion
-                ? [{ rotate: `${rotation}deg` }, { scale: 0.97 }]
+                ? [{ rotate: `${effectiveRotation}deg` }, { scale: 0.97 }]
                 : baseTransform,
           },
           style,

@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import CrumpledNote from './CrumpledNote';
 import FlyerCard from './FlyerCard';
+import LetterMagnet from './LetterMagnet';
+import PhotoCard from './PhotoCard';
 import PinnedItem from './PinnedItem';
 import Polaroid from './Polaroid';
 import Sticker from './Sticker';
@@ -22,10 +25,8 @@ const COL_COUNT = 3;
 function distribute(items: FridgeItem[]): FridgeItem[][] {
   const cols: FridgeItem[][] = Array.from({ length: COL_COUNT }, () => []);
   for (const item of items) {
-    const target =
-      item.columnHint != null
-        ? item.columnHint
-        : shortestColIndex(cols);
+    const hint = 'columnHint' in item ? item.columnHint : undefined;
+    const target = hint != null ? hint : shortestColIndex(cols);
     cols[target].push(item);
   }
   return cols;
@@ -39,7 +40,7 @@ function shortestColIndex(cols: FridgeItem[][]): number {
   return idx;
 }
 
-function renderItem(
+export function renderFridgeItem(
   item: FridgeItem,
   onMagnetPress?: (id: string) => void,
 ): React.ReactNode {
@@ -57,7 +58,11 @@ function renderItem(
           onPress={onPress}
           accessibilityLabel={item.accessibilityLabel}
         >
-          <Polaroid imageSource={item.imageSource} caption={item.caption} />
+          <Polaroid
+            imageSource={item.imageSource}
+            caption={item.caption}
+            size={item.size}
+          />
         </PinnedItem>
       );
     }
@@ -100,7 +105,64 @@ function renderItem(
           />
         </PinnedItem>
       );
+    case 'photoCard': {
+      const onPress = item.tappable
+        ? () => onMagnetPress?.(item.id)
+        : undefined;
+      return (
+        <PinnedItem
+          key={item.id}
+          rotation={item.rotation}
+          shadowVariant="polaroid"
+          onPress={onPress}
+          accessibilityLabel={item.accessibilityLabel}
+        >
+          <PhotoCard
+            imageSource={item.imageSource}
+            avatar={item.avatar}
+            width={item.width}
+            height={item.height}
+            aspect={item.aspect}
+          />
+        </PinnedItem>
+      );
+    }
+    case 'letterMagnet':
+      return (
+        <PinnedItem
+          key={item.id}
+          rotation={item.rotation}
+          shadowVariant="magnetSmall"
+        >
+          <LetterMagnet
+            letter={item.letter}
+            color={item.color}
+            size={item.size}
+          />
+        </PinnedItem>
+      );
+    case 'crumpledNote':
+      return (
+        <PinnedItem
+          key={item.id}
+          rotation={item.rotation}
+          shadowVariant="note"
+        >
+          <CrumpledNote
+            lines={item.lines}
+            width={item.width}
+            height={item.height}
+          />
+        </PinnedItem>
+      );
   }
+}
+
+function renderItem(
+  item: FridgeItem,
+  onMagnetPress?: (id: string) => void,
+): React.ReactNode {
+  return renderFridgeItem(item, onMagnetPress);
 }
 
 export default function FridgeCollage({

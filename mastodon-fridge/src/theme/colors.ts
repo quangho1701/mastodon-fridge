@@ -16,6 +16,10 @@ export const lightColors = {
   white: '#FFFFFF',
   black: '#000000',
   error: '#D32F2F',
+  ivorySurface: '#F8F6F2',
+  ivorySurfaceWarm: '#F0EBE0',
+  shelfGold: '#DAAA00',
+  shelfGoldShade: '#9C7A00',
 } as const;
 
 export const darkColors = {
@@ -30,6 +34,10 @@ export const darkColors = {
   white: '#FFFFFF',
   black: '#000000',
   error: '#EF5350',
+  ivorySurface: '#1A1713',
+  ivorySurfaceWarm: '#221D16',
+  shelfGold: '#B08A00',
+  shelfGoldShade: '#6E5600',
 } as const;
 
 export type ColorTokens = {
