@@ -1,32 +1,210 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme';
+import { TAB_BAR_CLEARANCE } from '../navigation/CustomTabBar';
+import {
+  MARKET_FLYERS,
+  MarketFilter,
+  MarketFlyer,
+} from '../data/marketSeed';
+import SearchBar from '../components/market/SearchBar';
+import CategoryChipRow from '../components/market/CategoryChipRow';
+import MarketFlyerCard from '../components/market/MarketFlyerCard';
+import MarketToast from '../components/market/MarketToast';
+
+const SCREEN_PAD = 16;
+const COL_GAP = 12;
+const CONTENT_ESTIMATE = 96;
 
 export default function MarketScreen() {
   const { theme } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
+
+  const columnWidth = (screenWidth - 2 * SCREEN_PAD - COL_GAP) / 2;
+
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState<MarketFilter>('All');
+  const [pinned, setPinned] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState({ visible: false, message: '' });
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return MARKET_FLYERS.filter(f => {
+      const catOk = category === 'All' || f.category === category;
+      if (!catOk) return false;
+      if (!q) return true;
+      return (
+        f.title.toLowerCase().includes(q) ||
+        f.club.toLowerCase().includes(q) ||
+        f.category.toLowerCase().includes(q)
+      );
+    });
+  }, [query, category]);
+
+  const { left, right } = useMemo(() => {
+    const l: MarketFlyer[] = [];
+    const r: MarketFlyer[] = [];
+    if (columnWidth <= 0) return { left: l, right: r };
+    let lh = 0;
+    let rh = 0;
+    for (const f of filtered) {
+      const h = columnWidth / f.aspectRatio + CONTENT_ESTIMATE;
+      if (lh <= rh) {
+        l.push(f);
+        lh += h + COL_GAP;
+      } else {
+        r.push(f);
+        rh += h + COL_GAP;
+      }
+    }
+    return { left: l, right: r };
+  }, [filtered, columnWidth]);
+
+  const onPin = useCallback((id: string) => {
+    setPinned(prev => {
+      const next = new Set(prev);
+      const wasPinned = next.has(id);
+      if (wasPinned) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      setToast({
+        visible: true,
+        message: wasPinned
+          ? 'Removed from your fridge.'
+          : "Pinned to your fridge. See you there, Mastodon.",
+      });
+      return next;
+    });
+  }, []);
+
+  const resetToast = useCallback(() => {
+    setToast({ visible: false, message: '' });
+  }, []);
+
+  const renderColumn = (flyers: MarketFlyer[], key: string) => (
+    <View key={key} style={{ width: columnWidth, gap: COL_GAP }}>
+      {flyers.map(f => (
+        <MarketFlyerCard
+          key={f.id}
+          flyer={f}
+          width={columnWidth}
+          isPinned={pinned.has(f.id)}
+          onPin={onPin}
+        />
+      ))}
+    </View>
+  );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[theme.typography.h1, { color: theme.colors.textPrimary }]}>
-        Community Market
-      </Text>
-      <Text
-        style={[
-          theme.typography.body,
-          { color: theme.colors.textSecondary, marginTop: theme.spacing.sm },
+    <SafeAreaView
+      edges={['top']}
+      style={[styles.root, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={styles.header}>
+        <Text style={[theme.typography.h1, { color: theme.colors.textPrimary }]}>
+          The Market
+        </Text>
+        <Text
+          style={[
+            theme.typography.caption,
+            { color: theme.colors.textSecondary, marginTop: 4 },
+          ]}
+        >
+          Scanned by Dons, for Dons.
+        </Text>
+        <View style={{ marginTop: 12 }}>
+          <SearchBar value={query} onChangeText={setQuery} />
+        </View>
+      </View>
+
+      <CategoryChipRow selected={category} onSelect={setCategory} />
+
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: TAB_BAR_CLEARANCE + 24 },
         ]}
+        showsVerticalScrollIndicator={false}
       >
-        Discover what's happening on campus.
-      </Text>
-    </View>
+        {columnWidth <= 0 ? null : filtered.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons
+              name="compass-outline"
+              size={48}
+              color={theme.colors.textSecondary}
+            />
+            <Text
+              style={[
+                theme.typography.h3,
+                {
+                  color: theme.colors.textPrimary,
+                  marginTop: 16,
+                  textAlign: 'center',
+                },
+              ]}
+            >
+              Nothing here yet.
+            </Text>
+            <Text
+              style={[
+                theme.typography.body,
+                {
+                  color: theme.colors.textSecondary,
+                  marginTop: 8,
+                  textAlign: 'center',
+                },
+              ]}
+            >
+              Your next step starts now.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.grid}>
+            {renderColumn(left, 'col-left')}
+            {renderColumn(right, 'col-right')}
+          </View>
+        )}
+      </ScrollView>
+
+      <MarketToast
+        visible={toast.visible}
+        message={toast.message}
+        onHide={resetToast}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
+  },
+  header: {
+    paddingHorizontal: SCREEN_PAD,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  scrollContent: {
+    paddingHorizontal: SCREEN_PAD,
+    paddingTop: 12,
+  },
+  grid: {
+    flexDirection: 'row',
+    gap: COL_GAP,
+  },
+  emptyState: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingTop: 48,
+    paddingHorizontal: 32,
   },
 });
