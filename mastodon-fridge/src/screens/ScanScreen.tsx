@@ -11,6 +11,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/RootNavigator';
 import { useTheme } from '../theme';
 import ScannerFrame from '../components/scanner/ScannerFrame';
 import ScanControls from '../components/scanner/ScanControls';
@@ -22,7 +24,7 @@ const SCAN_DURATION_MS = 2000;
 export default function ScanScreen() {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const cameraRef = useRef<CameraView | null>(null);
 
   const [permission, requestPermission] = useCameraPermissions();
@@ -36,10 +38,12 @@ export default function ScanScreen() {
   }, [permission, requestPermission]);
 
   const runScanAnimation = (uri: string) => {
-    // TODO(M2): navigate to ConfirmScreen with captured URI and run Claude Vision extraction.
     console.log('[ScanScreen] captured:', uri);
     setIsProcessing(true);
-    setTimeout(() => setIsProcessing(false), SCAN_DURATION_MS);
+    setTimeout(() => {
+      setIsProcessing(false);
+      navigation.navigate('Confirm', { imageUri: uri });
+    }, SCAN_DURATION_MS);
   };
 
   const handleShutter = async () => {
@@ -69,7 +73,7 @@ export default function ScanScreen() {
   };
 
   const handleClose = () => {
-    navigation.navigate('Fridge');
+    navigation.goBack();
   };
 
   // Permission: loading first check

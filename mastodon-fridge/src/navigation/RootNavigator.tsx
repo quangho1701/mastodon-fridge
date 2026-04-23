@@ -2,11 +2,17 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import EntryScreen from '../screens/EntryScreen';
+import ConfirmScreen from '../screens/ConfirmScreen';
 
 export type RootStackParamList = {
   Entry: undefined;
   MainTabs: undefined;
-  // Future screens will be added here (e.g. EventDetail, StickerWorkshop)
+  Confirm: {
+    imageUri?: string;
+    extractedTitle?: string;
+    extractedDate?: string;
+    extractedLocation?: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -22,6 +28,11 @@ export default function RootNavigator() {
         name="MainTabs"
         component={TabNavigator}
         options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Confirm"
+        component={ConfirmScreen}
+        options={{ gestureEnabled: true, animation: 'slide_from_right' }}
       />
     </Stack.Navigator>
   );

@@ -1,5 +1,7 @@
 export { default as MagnetButton } from './MagnetButton';
 export { default as FlyerCard } from './FlyerCard';
+export { default as StickerPickerModal } from './StickerPickerModal';
+export type { StickerSelection } from './StickerPickerModal';
 export { default as StickyNote } from './StickyNote';
 export { default as MastodonMagnet } from './MastodonMagnet';
 export { default as BrushedBackdrop } from './BrushedBackdrop';
