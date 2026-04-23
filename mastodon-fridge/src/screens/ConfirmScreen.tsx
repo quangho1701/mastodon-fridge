@@ -28,7 +28,9 @@ type ConfirmScreenProps = NativeStackScreenProps<RootStackParamList, 'Confirm'>;
 
 const MOCK_EVENT = {
   title: 'Upcoming Campus Event',
-  date: 'Friday, May 2 · 6:00 PM',
+  dateLabel: 'Friday, May 2 · 6:00 PM',
+  startDate: new Date(2026, 4, 2, 18, 0),
+  endDate: new Date(2026, 4, 2, 20, 0),
   location: 'Walb Student Union',
 };
 
@@ -39,8 +41,14 @@ export default function ConfirmScreen() {
   const route = useRoute<ConfirmScreenProps['route']>();
 
   const extractedTitle = route.params?.extractedTitle || MOCK_EVENT.title;
-  const extractedDate = route.params?.extractedDate || MOCK_EVENT.date;
+  const extractedDate = route.params?.extractedDate || MOCK_EVENT.dateLabel;
   const extractedLocation = route.params?.extractedLocation || MOCK_EVENT.location;
+  const startDate = route.params?.extractedStartDate
+    ? new Date(route.params.extractedStartDate)
+    : MOCK_EVENT.startDate;
+  const endDate = route.params?.extractedEndDate
+    ? new Date(route.params.extractedEndDate)
+    : MOCK_EVENT.endDate;
 
   const [title, setTitle] = useState(extractedTitle);
   const [date, setDate] = useState(extractedDate);
@@ -51,37 +59,29 @@ export default function ConfirmScreen() {
     try {
       const calendarPermission = await Calendar.requestCalendarPermissionsAsync();
       if (!calendarPermission.granted) {
-        Alert.alert('Calendar Permission', 'Permission to access calendar was denied.');
+        Alert.alert(
+          'Calendar Permission',
+          'Enable calendar access in Settings to save events.',
+        );
         setShowStickerPicker(true);
         return;
       }
 
-      const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-      const defaultCalendar = calendars[0];
-
-      if (!defaultCalendar) {
-        Alert.alert('No Calendar', 'No calendar found on this device.');
-        setShowStickerPicker(true);
-        return;
-      }
-
-      const eventDate = new Date();
-      const eventEndDate = new Date(eventDate.getTime() + 60 * 60 * 1000);
-
-      await Calendar.createEventAsync(defaultCalendar.id, {
-        title: title,
-        startDate: eventDate,
-        endDate: eventEndDate,
-        location: location,
+      const result = await Calendar.createEventInCalendarAsync({
+        title,
+        startDate,
+        endDate,
+        location,
         timeZone: 'America/Indiana/Indianapolis',
+        notes: `Pinned from Mastodon Fridge — ${date}`,
       });
 
-      Alert.alert('Success', 'Event added to calendar!');
-      setShowStickerPicker(true);
+      if (result.action === 'saved' || result.action === 'done') {
+        setShowStickerPicker(true);
+      }
     } catch (err) {
       console.warn('[ConfirmScreen] Calendar error:', err);
-      Alert.alert('Error', 'Failed to add event to calendar.');
-      setShowStickerPicker(true);
+      Alert.alert('Error', "Couldn't open the calendar.");
     }
   };
 

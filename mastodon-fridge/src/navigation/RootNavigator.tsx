@@ -11,6 +11,8 @@ export type RootStackParamList = {
     imageUri?: string;
     extractedTitle?: string;
     extractedDate?: string;
+    extractedStartDate?: string;
+    extractedEndDate?: string;
     extractedLocation?: string;
   };
 };
