@@ -8,6 +8,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/RootNavigator';
 import { useTheme } from '../theme';
 import { TAB_BAR_CLEARANCE } from '../navigation/CustomTabBar';
 import {
@@ -26,6 +29,8 @@ const COL_GAP = 12;
 export default function MarketScreen() {
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const cardWidth = (screenWidth - 2 * SCREEN_PAD - COL_GAP) / 2;
 
@@ -143,6 +148,7 @@ export default function MarketScreen() {
                 width={cardWidth}
                 isPinned={pinned.has(f.id)}
                 onPin={onPin}
+                onPress={id => navigation.navigate('EventGallery', { eventId: id })}
               />
             ))}
           </View>

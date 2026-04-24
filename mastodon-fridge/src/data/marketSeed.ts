@@ -3,6 +3,15 @@ import { ImageSourcePropType } from 'react-native';
 export type MarketCategory = 'Sports' | 'Arts' | 'Food' | 'Clubs' | 'Academic';
 export type MarketFilter = 'All' | MarketCategory;
 
+export interface EventPhoto {
+  id: string;
+  imageSource?: ImageSourcePropType;
+  authorName: string;
+  authorInitial?: string;
+  caption?: string;
+  postedAt: string;
+}
+
 export interface MarketFlyer {
   id: string;
   title: string;
@@ -12,6 +21,7 @@ export interface MarketFlyer {
   date: string;
   location: string;
   featured?: boolean;
+  photos?: EventPhoto[];
 }
 
 export const MARKET_CATEGORIES: MarketFilter[] = [
@@ -32,6 +42,35 @@ export const MARKET_FLYERS: MarketFlyer[] = [
     date: 'Apr 25',
     location: 'Walb Student Union',
     featured: true,
+    photos: [
+      {
+        id: 'p-pizza-1',
+        authorName: 'Maya Chen',
+        authorInitial: 'M',
+        caption: 'Line was out the door but SO worth it 🍕',
+        postedAt: '2h',
+      },
+      {
+        id: 'p-pizza-2',
+        authorName: 'Jordan Blake',
+        authorInitial: 'J',
+        caption: 'pepperoni > hawaiian, fight me',
+        postedAt: '3h',
+      },
+      {
+        id: 'p-pizza-3',
+        authorName: 'Sam Patel',
+        authorInitial: 'S',
+        caption: 'Met half my stats class in line. Accidental study group.',
+        postedAt: '4h',
+      },
+      {
+        id: 'p-pizza-4',
+        authorName: 'Riley Ng',
+        authorInitial: 'R',
+        postedAt: '5h',
+      },
+    ],
   },
   {
     id: 'm-arts-showcase',
@@ -41,6 +80,28 @@ export const MARKET_FLYERS: MarketFlyer[] = [
     date: 'May 03',
     location: 'Williams Theatre',
     featured: true,
+    photos: [
+      {
+        id: 'p-showcase-1',
+        authorName: 'Ana Ortiz',
+        authorInitial: 'A',
+        caption: 'The dance piece at the end — chills.',
+        postedAt: 'yesterday',
+      },
+      {
+        id: 'p-showcase-2',
+        authorName: 'Theo Mack',
+        authorInitial: 'T',
+        caption: 'Lighting design was unreal.',
+        postedAt: 'yesterday',
+      },
+      {
+        id: 'p-showcase-3',
+        authorName: 'Lena Kim',
+        authorInitial: 'L',
+        postedAt: '2d',
+      },
+    ],
   },
   {
     id: 'm-clubs-hack',
@@ -57,6 +118,28 @@ export const MARKET_FLYERS: MarketFlyer[] = [
     category: 'Sports',
     date: 'Apr 27',
     location: 'Gates Sports Center',
+    photos: [
+      {
+        id: 'p-esports-1',
+        authorName: 'Devon Shaw',
+        authorInitial: 'D',
+        caption: 'Valorant bracket is stacked this year.',
+        postedAt: '1h',
+      },
+      {
+        id: 'p-esports-2',
+        authorName: 'Priya Iyer',
+        authorInitial: 'P',
+        caption: 'Setup looks clean. Finally a real desk.',
+        postedAt: '2h',
+      },
+      {
+        id: 'p-esports-3',
+        authorName: 'Kai Brooks',
+        authorInitial: 'K',
+        postedAt: '6h',
+      },
+    ],
   },
   {
     id: 'm-arts-jazz',

@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import EntryScreen from '../screens/EntryScreen';
 import ConfirmScreen from '../screens/ConfirmScreen';
+import EventGalleryScreen from '../screens/EventGalleryScreen';
 
 export type RootStackParamList = {
   Entry: undefined;
@@ -14,6 +15,9 @@ export type RootStackParamList = {
     extractedStartDate?: string;
     extractedEndDate?: string;
     extractedLocation?: string;
+  };
+  EventGallery: {
+    eventId: string;
   };
 };
 
@@ -34,6 +38,11 @@ export default function RootNavigator() {
       <Stack.Screen
         name="Confirm"
         component={ConfirmScreen}
+        options={{ gestureEnabled: true, animation: 'slide_from_right' }}
+      />
+      <Stack.Screen
+        name="EventGallery"
+        component={EventGalleryScreen}
         options={{ gestureEnabled: true, animation: 'slide_from_right' }}
       />
     </Stack.Navigator>
