@@ -37,6 +37,15 @@ export default function ScanScreen() {
     }
   }, [permission, requestPermission]);
 
+  useEffect(() => {
+    const cam = cameraRef.current;
+    if (!cam || !isProcessing) return;
+    cam.pausePreview();
+    return () => {
+      cam.resumePreview();
+    };
+  }, [isProcessing]);
+
   const runScanAnimation = (uri: string) => {
     console.log('[ScanScreen] captured:', uri);
     setIsProcessing(true);
