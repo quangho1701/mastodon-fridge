@@ -3,16 +3,27 @@ import {
   AccessibilityInfo,
   Animated,
   Easing,
+  ImageSourcePropType,
   Pressable,
   StyleSheet,
   View,
 } from 'react-native';
 import Magnet from '../Magnet';
 
+/**
+ * Forward-compat slot for per-club pin styling. v2 renders the generic gold
+ * magnet regardless of `kind`. When club logos arrive, add a `CircleLogoPin`
+ * render branch for `kind === 'club'`; the data model is already wired.
+ */
+export type PinIdentity =
+  | { kind: 'default' }
+  | { kind: 'club'; logoSource: ImageSourcePropType; accentColor: string };
+
 interface QuickPinButtonProps {
   pinned: boolean;
   title: string;
   onPress: () => void;
+  pin?: PinIdentity;
 }
 
 export default function QuickPinButton({

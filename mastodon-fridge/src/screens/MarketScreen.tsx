@@ -13,8 +13,8 @@ import { TAB_BAR_CLEARANCE } from '../navigation/CustomTabBar';
 import {
   MARKET_FLYERS,
   MarketFilter,
-  MarketFlyer,
 } from '../data/marketSeed';
+import { getOrganization } from '../data/organizations';
 import SearchBar from '../components/market/SearchBar';
 import CategoryChipRow from '../components/market/CategoryChipRow';
 import MarketFlyerCard from '../components/market/MarketFlyerCard';
@@ -22,13 +22,12 @@ import MarketToast from '../components/market/MarketToast';
 
 const SCREEN_PAD = 16;
 const COL_GAP = 12;
-const CONTENT_ESTIMATE = 96;
 
 export default function MarketScreen() {
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
 
-  const columnWidth = (screenWidth - 2 * SCREEN_PAD - COL_GAP) / 2;
+  const cardWidth = (screenWidth - 2 * SCREEN_PAD - COL_GAP) / 2;
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<MarketFilter>('All');
@@ -38,35 +37,16 @@ export default function MarketScreen() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return MARKET_FLYERS.filter(f => {
-      const catOk = category === 'All' || f.category === category;
-      if (!catOk) return false;
+      if (category !== 'All' && f.category !== category) return false;
       if (!q) return true;
+      const orgName = getOrganization(f.organizationId).name.toLowerCase();
       return (
         f.title.toLowerCase().includes(q) ||
-        f.club.toLowerCase().includes(q) ||
+        orgName.includes(q) ||
         f.category.toLowerCase().includes(q)
       );
     });
   }, [query, category]);
-
-  const { left, right } = useMemo(() => {
-    const l: MarketFlyer[] = [];
-    const r: MarketFlyer[] = [];
-    if (columnWidth <= 0) return { left: l, right: r };
-    let lh = 0;
-    let rh = 0;
-    for (const f of filtered) {
-      const h = columnWidth / f.aspectRatio + CONTENT_ESTIMATE;
-      if (lh <= rh) {
-        l.push(f);
-        lh += h + COL_GAP;
-      } else {
-        r.push(f);
-        rh += h + COL_GAP;
-      }
-    }
-    return { left: l, right: r };
-  }, [filtered, columnWidth]);
 
   const onPin = useCallback((id: string) => {
     setPinned(prev => {
@@ -90,20 +70,6 @@ export default function MarketScreen() {
   const resetToast = useCallback(() => {
     setToast({ visible: false, message: '' });
   }, []);
-
-  const renderColumn = (flyers: MarketFlyer[], key: string) => (
-    <View key={key} style={{ width: columnWidth, gap: COL_GAP }}>
-      {flyers.map(f => (
-        <MarketFlyerCard
-          key={f.id}
-          flyer={f}
-          width={columnWidth}
-          isPinned={pinned.has(f.id)}
-          onPin={onPin}
-        />
-      ))}
-    </View>
-  );
 
   return (
     <SafeAreaView
@@ -136,7 +102,7 @@ export default function MarketScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {columnWidth <= 0 ? null : filtered.length === 0 ? (
+        {cardWidth <= 0 ? null : filtered.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons
               name="compass-outline"
@@ -170,8 +136,15 @@ export default function MarketScreen() {
           </View>
         ) : (
           <View style={styles.grid}>
-            {renderColumn(left, 'col-left')}
-            {renderColumn(right, 'col-right')}
+            {filtered.map(f => (
+              <MarketFlyerCard
+                key={f.id}
+                flyer={f}
+                width={cardWidth}
+                isPinned={pinned.has(f.id)}
+                onPin={onPin}
+              />
+            ))}
           </View>
         )}
       </ScrollView>
@@ -200,6 +173,7 @@ const styles = StyleSheet.create({
   },
   grid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: COL_GAP,
   },
   emptyState: {

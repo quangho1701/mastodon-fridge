@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, cardShadow } from '../../theme';
 import { MarketFlyer } from '../../data/marketSeed';
+import { getOrganization } from '../../data/organizations';
 import QuickPinButton from './QuickPinButton';
 
 interface MarketFlyerCardProps {
@@ -18,6 +13,9 @@ interface MarketFlyerCardProps {
   onPress?: (id: string) => void;
 }
 
+const IMAGE_ASPECT = 3 / 4;
+const CONTENT_HEIGHT = 136;
+
 export default function MarketFlyerCard({
   flyer,
   width,
@@ -27,15 +25,16 @@ export default function MarketFlyerCard({
 }: MarketFlyerCardProps) {
   const { theme } = useTheme();
   const shadow = cardShadow(theme.dark);
+  const org = getOrganization(flyer.organizationId);
 
-  const imageHeight = width / flyer.aspectRatio;
+  const imageHeight = width / IMAGE_ASPECT;
 
   return (
     <Pressable
       onPress={onPress ? () => onPress(flyer.id) : undefined}
       disabled={!onPress}
       accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityLabel={`${flyer.category}. ${flyer.title}. ${flyer.club}. ${flyer.date} at ${flyer.location}.`}
+      accessibilityLabel={`${flyer.category}. ${flyer.title}. ${org.name}. ${flyer.date} at ${flyer.location}.`}
       style={({ pressed }) => [
         styles.card,
         {
@@ -51,7 +50,13 @@ export default function MarketFlyerCard({
         },
       ]}
     >
-      <View style={{ width, height: imageHeight, backgroundColor: flyer.placeholderColor }}>
+      <View
+        style={{
+          width,
+          height: imageHeight,
+          backgroundColor: org.pinColor,
+        }}
+      >
         {flyer.imageSource && (
           <Image
             source={flyer.imageSource}
@@ -67,12 +72,13 @@ export default function MarketFlyerCard({
         onPress={() => onPin(flyer.id)}
       />
 
-      <View style={styles.content}>
+      <View style={[styles.content, { height: CONTENT_HEIGHT }]}>
         <Text
           selectable={false}
+          numberOfLines={1}
           style={[
             theme.typography.overline,
-            { color: theme.colors.action, marginBottom: 6 },
+            { color: theme.colors.action },
           ]}
         >
           {flyer.category}
@@ -80,19 +86,33 @@ export default function MarketFlyerCard({
         <Text
           selectable={false}
           numberOfLines={2}
-          style={[theme.typography.h3, { color: theme.colors.textPrimary }]}
+          style={[
+            theme.typography.h3,
+            { color: theme.colors.textPrimary, marginTop: 4 },
+          ]}
         >
           {flyer.title}
+        </Text>
+        <View style={styles.metaSpacer} />
+        <Text
+          selectable={false}
+          numberOfLines={1}
+          style={[
+            theme.typography.caption,
+            { color: theme.colors.textSecondary },
+          ]}
+        >
+          {org.name}
         </Text>
         <Text
           selectable={false}
           numberOfLines={1}
           style={[
             theme.typography.caption,
-            { color: theme.colors.textSecondary, marginTop: 6 },
+            { color: theme.colors.textSecondary, marginTop: 2 },
           ]}
         >
-          {flyer.club} · {flyer.date}
+          {flyer.date}
         </Text>
       </View>
     </Pressable>
@@ -107,5 +127,9 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 12,
+  },
+  metaSpacer: {
+    flex: 1,
+    minHeight: 4,
   },
 });

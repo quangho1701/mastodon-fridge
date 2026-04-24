@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../theme';
 import { MarketFilter, MARKET_CATEGORIES } from '../../data/marketSeed';
 
@@ -15,6 +15,7 @@ export default function CategoryChipRow({
   const { theme } = useTheme();
 
   return (
+    <View style={styles.wrapper}>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
@@ -58,14 +59,17 @@ export default function CategoryChipRow({
         );
       })}
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    paddingVertical: 10,
+  },
   content: {
     paddingHorizontal: 16,
     gap: 8,
-    paddingVertical: 4,
   },
   chip: {
     minHeight: 36,
