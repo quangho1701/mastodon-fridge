@@ -18,7 +18,7 @@ export const TAB_BAR_CLEARANCE = 96;
 const TAB_ICONS: Record<string, { focused: keyof typeof Ionicons.glyphMap; default: keyof typeof Ionicons.glyphMap }> = {
   Fridge: { focused: 'home', default: 'home-outline' },
   Market: { focused: 'compass', default: 'compass-outline' },
-  Scan: { focused: 'add', default: 'add' },
+  Scan: { focused: 'camera', default: 'camera-outline' },
   Friends: { focused: 'people', default: 'people-outline' },
   Profile: { focused: 'person', default: 'person-outline' },
 };
@@ -91,7 +91,7 @@ export default function CustomTabBar({
                   },
                 ]}
               >
-                <Ionicons name="add" size={32} color={theme.colors.action} />
+                <Ionicons name="camera" size={28} color={theme.colors.action} />
               </View>
             </TouchableOpacity>
           );

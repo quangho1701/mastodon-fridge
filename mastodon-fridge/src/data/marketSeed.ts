@@ -1,4 +1,5 @@
 import { ImageSourcePropType } from 'react-native';
+import type { FridgeItem } from './fridgeSeed';
 
 export type MarketCategory = 'Sports' | 'Arts' | 'Food' | 'Clubs' | 'Academic';
 export type MarketFilter = 'All' | MarketCategory;
@@ -22,6 +23,7 @@ export interface MarketFlyer {
   location: string;
   featured?: boolean;
   photos?: EventPhoto[];
+  fridgeItems?: FridgeItem[];
 }
 
 export const MARKET_CATEGORIES: MarketFilter[] = [

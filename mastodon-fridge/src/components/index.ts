@@ -6,6 +6,7 @@ export { default as StickyNote } from './StickyNote';
 export { default as MastodonMagnet } from './MastodonMagnet';
 export { default as BrushedBackdrop } from './BrushedBackdrop';
 export { default as FridgeSurface } from './FridgeSurface';
+export { default as FridgeFrame } from './FridgeFrame';
 export { default as FridgeHeader } from './FridgeHeader';
 export { default as PinnedItem } from './PinnedItem';
 export { default as Polaroid } from './Polaroid';
