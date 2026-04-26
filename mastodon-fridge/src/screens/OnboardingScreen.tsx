@@ -86,10 +86,21 @@ const SLIDES: SlideData[] = [
       'Mastodon mascot browsing a bulletin board of flyers and photos from other students',
     headline: 'See what Dons\nare up to.',
     body: 'Browse flyers other students pinned,\ntap a magnet, and join the moment.',
-    ctaLabel: 'Enter the fridge',
-    ctaA11yLabel: 'Enter the fridge',
-    ctaAction: 'enter',
+    ctaLabel: 'Next',
+    ctaA11yLabel: 'Next',
+    ctaAction: 'next',
     showSignIn: true,
+  },
+  {
+    key: 'getstarted',
+    mascot: require('../assets/images/mascot-getstarted.png'),
+    mascotA11yLabel: 'Mastodon mascot standing ready to welcome you to the Fridge',
+    headline: 'Your fridge\nawaits, Don.',
+    body: 'Sign in with your university email\nand start pinning what matters.',
+    ctaLabel: 'Get started',
+    ctaA11yLabel: 'Get started',
+    ctaAction: 'enter',
+    showSignIn: false,
   },
 ];
 
@@ -352,7 +363,7 @@ export default function OnboardingScreen({ navigation }: Props) {
       listRef.current?.scrollToIndex({ index: index + 1, animated: true });
       return;
     }
-    navigation.replace('MainTabs');
+    navigation.replace('Entry');
   };
 
   const handleSignIn = () => {

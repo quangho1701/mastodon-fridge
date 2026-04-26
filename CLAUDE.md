@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Mastodon Fridge is a mobile-first Expo/React Native app for Purdue Fort Wayne (PFW) students that digitizes the experience of a communal fridge door — students scan physical flyers with AI, pin events to a personal "fridge," and share photos/memories in event galleries. Phase 1 MVP focuses on 8 screens covering onboarding, home, scanning, confirmation, and discovery.
 
-**Tech stack:** React Native (Expo), TypeScript, Firebase Auth, Claude Vision API (Anthropic).
+**Tech stack:** React Native (Expo ~54), TypeScript, Firebase Auth (planned), Claude Vision API (Anthropic, planned for backend).
 
 ## Development Commands
 
@@ -23,7 +23,7 @@ npm test              # Currently a no-op placeholder
 
 **Key files:**
 - [index.ts](mastodon-fridge/index.ts) — Expo root entry point
-- [App.tsx](mastodon-fridge/App.tsx) — Main component (navigation setup)
+- [App.tsx](mastodon-fridge/App.tsx) — Wraps `SafeAreaProvider` → `ThemeProvider` → `NavigationContainer` → `RootNavigator`
 - [app.json](mastodon-fridge/app.json) — Expo config (fonts, splash, icon, native modules)
 - [tsconfig.json](mastodon-fridge/tsconfig.json) — TypeScript config with `@/*` path alias
 
@@ -33,18 +33,27 @@ npm test              # Currently a no-op placeholder
 
 ```
 mastodon-fridge/src/
-├── screens/           # Full-screen components (EntryScreen, FridgeScreen, ScanScreen, etc.)
-├── components/        # Reusable UI: FridgeCollage, Magnet, Polaroid, StickyNote, FlyerCard, etc.
-├── navigation/        # React Navigation setup: RootNavigator, TabNavigator, CustomTabBar
+├── screens/           # Full-screen components, one file per route
+├── components/        # Reusable UI; scanner/ market/ gallery/ sub-folders for feature-specific components
+├── navigation/        # RootNavigator, TabNavigator, CustomTabBar
 ├── theme/             # Design system: colors, typography, spacing, shadows, ThemeContext
-└── data/              # Seed data (e.g., fridgeSeed.ts for mock event/sticker data)
+├── data/              # Seed data (fridgeSeed.ts — mock events/stickers)
+└── assets/images/     # Mascot PNGs and other static images
 ```
 
-### Navigation
+### Navigation Stack
 
-- **RootNavigator** — Stack navigator for root-level auth flow (Entry screen vs. authenticated app)
-- **TabNavigator** — Bottom tab navigation (Fridge, Market, Center [+] action, Friends, Profile)
-- **CustomTabBar** — Custom tab bar component with protruding center button at specified height
+**RootNavigator** (`createNativeStackNavigator`) — `initialRouteName: "Onboarding"`:
+- `Onboarding` → `EntryScreen` (5-slide horizontal carousel; navigates to `Entry` on finish or "Sign in")
+- `Entry` → `EntryScreen` (auth landing)
+- `MainTabs` → `TabNavigator` (`gestureEnabled: false`)
+- `Confirm` → `ConfirmScreen` (params: `imageUri`, `extractedTitle`, `extractedDate`, `extractedStartDate`, `extractedEndDate`, `extractedLocation`)
+- `EventGallery` → `EventGalleryScreen` (params: `eventId: string`)
+
+**TabNavigator** (`createBottomTabNavigator`) with custom `CustomTabBar`:
+`Fridge | Market | Scan | Friends | Profile`
+
+The `RootStackParamList` type in [RootNavigator.tsx](mastodon-fridge/src/navigation/RootNavigator.tsx) is the source of truth for all navigation params.
 
 ### Design System
 
@@ -54,41 +63,62 @@ Located in [src/theme/](mastodon-fridge/src/theme/):
 - [typography.ts](mastodon-fridge/src/theme/typography.ts) — Font sizes, weights, line heights (United Sans Cond + Acumin Pro via `expo-font`)
 - [spacing.ts](mastodon-fridge/src/theme/spacing.ts) — 4px base unit system (4, 8, 12, 16, 20, 24, 32, 48px)
 - [shadows.ts](mastodon-fridge/src/theme/shadows.ts) — Light mode shadows only; dark mode uses borders
-- [ThemeContext.tsx](mastodon-fridge/src/theme/ThemeContext.tsx) — Provides theme state and toggle function
+- [ThemeContext.tsx](mastodon-fridge/src/theme/ThemeContext.tsx) — `useTheme()` hook returns `{ theme, toggleTheme }`
 
-### Key Components
+The theme barrel export is at `src/theme/index.ts`. Always import from `@/theme`, not individual files.
 
-- **FridgeCollage** — 3-column masonry layout rendering fridge items (magnets, polaroids, stickers)
-- **FridgeSurface** — Stainless-steel texture background container with FridgeCollage
-- **Magnet/MastodonMagnet/StickyNote/Polaroid/Sticker** — Individual fridge object types
-- **FlyerCard** — Display scanned flyer or event card in lists
-- **CustomTabBar** — Bottom navigation with 44px minimum touch targets
+### Component Patterns
+
+- **Screen-scoped sub-components** live in sub-folders: `components/scanner/`, `components/market/`, `components/gallery/`
+- **Fridge surface objects**: `Magnet`, `MastodonMagnet`, `LetterMagnet`, `StickyNote`, `Polaroid`, `Sticker`, `CrumpledNote`, `PhotoCard`, `PinnedItem` — all render as fridge collage items
+- **FridgeCollage** — masonry layout rendering fridge items inside `FridgeSurface` (stainless-steel texture background)
+- **ScanScreen** freezes camera preview during extraction (`cameraRef.current.pausePreview()`) and resumes on unmount
+
+### Installed Libraries
+
+Only these are in `package.json` — do not assume `react-native-reanimated` or `react-native-gesture-handler` are available (they are **not** yet installed):
+
+```
+@react-navigation/native, @react-navigation/native-stack, @react-navigation/bottom-tabs
+expo-camera, expo-image-picker, expo-calendar, expo-blur, expo-linear-gradient, expo-font
+react-native-svg, react-native-safe-area-context, react-native-screens, react-native-web
+@expo/vector-icons
+```
 
 ### Data & Mocking
 
-[src/data/fridgeSeed.ts](mastodon-fridge/src/data/fridgeSeed.ts) provides mock event and sticker data for development. Replace with backend API calls during Milestone 1 (auth integration).
+[src/data/fridgeSeed.ts](mastodon-fridge/src/data/fridgeSeed.ts) provides mock event and sticker data. No real backend or auth is connected yet (Milestone 1+).
+
+## Implementation Status
+
+The codebase is at **Milestone 0 complete / Milestone 1 in progress**:
+- Screens built: Onboarding (5-slide carousel), Entry, FridgeScreen, MarketScreen, ScanScreen, ConfirmScreen, EventGalleryScreen, FriendsScreen, ProfileScreen
+- Navigation wired end-to-end; ScanScreen has camera + permission handling
+- No auth, no backend API calls, no real data — all UI is mock/seed
+
+Refer to [implementation-plan.md](implementation-plan.md) for milestone details and [UI_DEVELOPMENT_PLAN.md](UI_DEVELOPMENT_PLAN.md) for per-screen layout specs.
 
 ## Key Design Documents
 
-- **DESIGN.md** — Mobile design system: color palette, typography, spacing, component styles, motion guidelines, brand voice rules.
+- **DESIGN.md** — Color palette, typography, spacing, component styles, motion guidelines, brand voice.
 - **UI_DEVELOPMENT_PLAN.md** — Source of truth for Phase 1 UI: 8 screens with user flows, layouts, interactions.
-- **implementation-plan.md** — Phased approach: Milestone 0 (scaffolding, theme), Milestone 1 (auth), Milestone 2 (AI scanning), Milestone 3 (calendar + stickers), Milestone 4+ (gallery, community features).
+- **implementation-plan.md** — Phased milestones (0–9) with task checklists and database schema.
+- **PRD.md** — Product requirements including MoSCoW priority and NFR targets.
 
 ## Architecture Notes
 
-- **Personal Fridge (Screen 2):** Organic 3-column collage layout on stainless-steel texture background (not grid/list).
-- **Bottom Navigation:** 5 sections with protruding center [+] action button (special CustomTabBar component).
-- **AI Scanner (Screen 3):** Camera viewfinder with glowing scan frame; capture/compress image, send to Claude Vision API backend endpoint, extract event JSON, display editable confirmation form.
-- **Sticker System:** Core UX mechanic — magnets, polaroids, sticky notes, stickers are interactive objects users place/drag on fridge surface.
-- **Theming:** Light mode uses shadows for depth; dark mode uses borders only (no shadows). Enforce via theme context.
-- **Fonts:** United Sans Cond (headings) and Acumin Pro (body) loaded via `expo-font` plugin (see app.json).
+- **Personal Fridge (FridgeScreen):** Organic 3-column collage — absolute positioning or custom layout, NOT a FlatList grid. Items have slight random rotation (±3°).
+- **AI Scanner (ScanScreen → ConfirmScreen):** Camera capture → compress → POST to backend `/api/extract` (Claude Vision) → editable confirmation form. Backend not yet built.
+- **Sticker System:** Core UX — magnets, polaroids, sticky notes are draggable objects placed on the fridge surface.
+- **Theming:** Light mode uses shadows for depth; dark mode uses borders only. Always use `useTheme()` — never hardcode dark/light logic.
+- **Fonts:** `UnitedSansCond-Bold` (headings) and `AcuminPro-Regular` / `AcuminPro-Semibold` loaded via `expo-font` plugin in app.json. Use these exact family strings in StyleSheet.
 
 ## Brand Rules
 
-- Prefer "we" in community-oriented microcopy, but it's a soft preference, not a strict rule.
 - "Dons" is acceptable wherever a playful, student-native register fits (welcome copy, empty states, marketing). Reserve "Mastodons" for official/identity moments.
+- Prefer "we" in community-oriented microcopy, but it's a soft preference, not a strict rule.
 - Summit Gold (`#DAAA00`) is the action/interactive color; Golden (`#CFB991`) is for brand identity moments only.
-- Minimum touch target: 44x44px.
+- Minimum touch target: 44×44px.
 
 ## UI/UX Skill — Mandatory
 
@@ -103,5 +133,6 @@ Do not substitute reading the skill docs for actually running the script. The sc
 ## TypeScript & Linting
 
 - `npm run lint` runs `tsc --noEmit` (type check only; no files emitted)
-- Strict mode enabled; all components should be typed
-- Use path alias `@/*` in imports (e.g., `import Button from '@/components/Button'`)
+- Strict mode enabled; all components must be typed
+- Use path alias `@/*` in imports (e.g., `import { useTheme } from '@/theme'`)
+- Screen props should use `NativeStackScreenProps<RootStackParamList, 'ScreenName'>` from `@react-navigation/native-stack`
