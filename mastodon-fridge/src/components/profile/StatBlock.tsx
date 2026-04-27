@@ -1,28 +1,35 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../theme';
-import { cardShadow } from '../../theme/shadows';
+import { useTheme } from '@/theme';
+import { cardShadow } from '@/theme/shadows';
 
 interface StatBlockProps {
   value: string | number;
   label: string;
+  variant?: 'card' | 'inline';
 }
 
-export default function StatBlock({ value, label }: StatBlockProps) {
+export default function StatBlock({
+  value,
+  label,
+  variant = 'card',
+}: StatBlockProps) {
   const { theme } = useTheme();
+  const isInline = variant === 'inline';
 
   return (
     <View
       style={[
         styles.tile,
-        {
+        isInline ? styles.tileInline : styles.tileCard,
+        !isInline && {
           backgroundColor: theme.colors.surface,
           borderColor: theme.colors.cardBorder,
           borderRadius: theme.layout.borderRadius.lg,
           paddingVertical: theme.spacing.md,
           paddingHorizontal: theme.spacing.sm,
         },
-        cardShadow(theme.dark),
+        !isInline && cardShadow(theme.dark),
       ]}
     >
       <Text
@@ -39,11 +46,11 @@ export default function StatBlock({ value, label }: StatBlockProps) {
       </Text>
       <Text
         style={[
-          theme.typography.overline,
+          theme.typography.caption,
+          styles.label,
           {
             color: theme.colors.textSecondary,
             marginTop: theme.spacing.xs,
-            textAlign: 'center',
           },
         ]}
         numberOfLines={2}
@@ -57,14 +64,24 @@ export default function StatBlock({ value, label }: StatBlockProps) {
 const styles = StyleSheet.create({
   tile: {
     flex: 1,
-    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 76,
+  },
+  tileCard: {
+    borderWidth: 1,
+  },
+  tileInline: {
+    paddingHorizontal: 8,
   },
   value: {
     fontSize: 26,
     fontWeight: '700',
     lineHeight: 30,
+  },
+  label: {
+    lineHeight: 16,
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '../../theme';
+import { useTheme } from '@/theme';
 
 interface SegmentOption<T extends string> {
   label: string;
@@ -29,7 +29,9 @@ export default function SegmentedControl<T extends string>({
         styles.container,
         full && styles.containerFull,
         {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.dark
+            ? theme.colors.background
+            : theme.colors.white,
           borderColor: theme.colors.border,
           borderRadius: theme.layout.borderRadius.md,
         },
@@ -64,6 +66,8 @@ export default function SegmentedControl<T extends string>({
                 },
               ]}
               numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.78}
             >
               {opt.label}
             </Text>
@@ -78,16 +82,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderWidth: 1,
-    padding: 2,
+    padding: 3,
     alignSelf: 'flex-start',
   },
   containerFull: {
     alignSelf: 'stretch',
   },
   segment: {
-    paddingVertical: 7,
+    paddingVertical: 8,
     paddingHorizontal: 12,
-    minHeight: 32,
+    minHeight: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },

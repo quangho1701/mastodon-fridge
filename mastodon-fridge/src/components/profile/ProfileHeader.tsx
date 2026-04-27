@@ -6,8 +6,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useTheme } from '../../theme';
-import { cardShadow } from '../../theme/shadows';
+import { useTheme } from '@/theme';
+import { cardShadow } from '@/theme/shadows';
 
 const DEFAULT_AVATAR = require('../../assets/images/mascot-avatar.png');
 
@@ -31,7 +31,7 @@ export default function ProfileHeader({
   return (
     <View
       style={[
-        styles.row,
+        styles.card,
         {
           backgroundColor: theme.colors.surface,
           borderColor: theme.colors.cardBorder,
@@ -41,52 +41,65 @@ export default function ProfileHeader({
         cardShadow(theme.dark),
       ]}
     >
-      <View
-        style={[
-          styles.avatarRing,
-          {
-            borderColor: theme.colors.primary,
-            backgroundColor: theme.colors.background,
-          },
-        ]}
-      >
-        <Image
-          source={avatarSource ?? DEFAULT_AVATAR}
-          style={styles.avatar}
-          resizeMode="cover"
-        />
-      </View>
-
-      <View style={styles.textCol}>
-        <Text
-          style={[theme.typography.h2, { color: theme.colors.textPrimary }]}
-          numberOfLines={1}
-        >
-          {name}
-        </Text>
-        <Text
+      <View style={styles.row}>
+        <View
           style={[
-            theme.typography.caption,
-            { color: theme.colors.textSecondary, marginTop: 2 },
+            styles.avatarRing,
+            {
+              borderColor: theme.colors.primary,
+              backgroundColor: theme.colors.background,
+            },
           ]}
-          numberOfLines={1}
         >
-          {metaParts.join('  ·  ')}
-        </Text>
+          <Image
+            source={avatarSource ?? DEFAULT_AVATAR}
+            style={styles.avatar}
+            resizeMode="cover"
+          />
+        </View>
+
+        <View style={styles.textCol}>
+          <Text
+            style={[theme.typography.overline, { color: theme.colors.action }]}
+            numberOfLines={1}
+          >
+            Campus Profile
+          </Text>
+          <Text
+            style={[
+              theme.typography.h2,
+              { color: theme.colors.textPrimary, marginTop: theme.spacing.xs },
+            ]}
+            numberOfLines={1}
+          >
+            {name}
+          </Text>
+          <Text
+            style={[
+              theme.typography.caption,
+              { color: theme.colors.textSecondary, marginTop: 2 },
+            ]}
+            numberOfLines={1}
+          >
+            {metaParts.join(' / ')}
+          </Text>
+        </View>
       </View>
     </View>
   );
 }
 
-const AVATAR_SIZE = 88;
+const AVATAR_SIZE = 72;
 const RING_PAD = 3;
 
 const styles = StyleSheet.create({
+  card: {
+    borderWidth: 1,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    borderWidth: 1,
+    gap: 14,
   },
   avatarRing: {
     width: AVATAR_SIZE + RING_PAD * 2,

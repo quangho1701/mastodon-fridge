@@ -8,17 +8,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../theme';
-import { cardShadow } from '../theme/shadows';
-import { TAB_BAR_CLEARANCE } from '../navigation/CustomTabBar';
-import ShelfDivider from '../components/ShelfDivider';
+import { useTheme } from '@/theme';
+import { cardShadow } from '@/theme/shadows';
+import { TAB_BAR_CLEARANCE } from '@/navigation/CustomTabBar';
 import {
   ProfileHeader,
   StatBlock,
   SectionHeader,
   PreferenceRow,
   SegmentedControl,
-} from '../components/profile';
+} from '@/components/profile';
 
 const SCREEN_PAD = 16;
 
@@ -39,8 +38,8 @@ export default function ProfileScreen() {
     if (next !== appearance) toggleTheme();
   };
 
-  const groupedCardStyle = [
-    styles.groupedCard,
+  const cardBaseStyle = [
+    styles.panel,
     {
       backgroundColor: theme.colors.surface,
       borderColor: theme.colors.cardBorder,
@@ -50,25 +49,16 @@ export default function ProfileScreen() {
     cardShadow(theme.dark),
   ];
 
+  const separatorStyle = [
+    styles.separator,
+    { backgroundColor: theme.colors.border },
+  ];
+
   return (
     <SafeAreaView
       edges={['top']}
       style={[styles.root, { backgroundColor: theme.colors.background }]}
     >
-      <View style={styles.header}>
-        <Text style={[theme.typography.h1, { color: theme.colors.textPrimary }]}>
-          The Pantry
-        </Text>
-        <Text
-          style={[
-            theme.typography.caption,
-            { color: theme.colors.textSecondary, marginTop: 4 },
-          ]}
-        >
-          Your stash, your rules.
-        </Text>
-      </View>
-
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -76,122 +66,156 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.hero}>
+          <View style={styles.heroCopy}>
+            <Text
+              style={[theme.typography.h1, { color: theme.colors.textPrimary }]}
+            >
+              The Pantry
+            </Text>
+          </View>
+        </View>
+
         <ProfileHeader
           name="Mastodon Don"
           handle="@mastodon.don"
-          joinedLabel="Don since '26"
+          joinedLabel="PFW '29"
         />
 
-        <ShelfDivider variant="gold" style={styles.shelfSpace} />
-
-        <SectionHeader title="Your Year" />
-        <View style={styles.statsRow}>
-          <StatBlock value={12} label="Events Attended" />
-          <StatBlock value={5} label="Flyers Scanned" />
-          <StatBlock value={20} label="Memories Saved" />
+        <View style={styles.section}>
+          <SectionHeader title="Your Year" />
+          <View
+            style={[
+              styles.statsPanel,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.cardBorder,
+                borderRadius: theme.layout.borderRadius.lg,
+              },
+              cardShadow(theme.dark),
+            ]}
+          >
+            <StatBlock value={12} label="Events Attended" variant="inline" />
+            <View
+              style={[styles.statDivider, { backgroundColor: theme.colors.border }]}
+            />
+            <StatBlock value={5} label="Flyers Scanned" variant="inline" />
+            <View
+              style={[styles.statDivider, { backgroundColor: theme.colors.border }]}
+            />
+            <StatBlock value={20} label="Memories Saved" variant="inline" />
+          </View>
         </View>
 
-        <ShelfDivider variant="gold" style={styles.shelfSpace} />
-
-        <SectionHeader title="Preferences" />
-        <View style={groupedCardStyle}>
-          <PreferenceRow
-            label="Default Calendar"
-            right={
-              <View style={styles.chevronRow}>
-                <Text
-                  style={[
-                    theme.typography.body,
-                    { color: theme.colors.textSecondary },
-                  ]}
-                >
-                  Apple Calendar
-                </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={18}
-                  color={theme.colors.textSecondary}
+        <View style={styles.section}>
+          <SectionHeader title="Settings" />
+          <View style={cardBaseStyle}>
+            <PreferenceRow
+              icon="calendar-outline"
+              label="Default Calendar"
+              description="New events save to Apple Calendar."
+              right={
+                <View style={styles.chevronRow}>
+                  <Text
+                    style={[
+                      theme.typography.caption,
+                      { color: theme.colors.textSecondary },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    Apple
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={theme.colors.textSecondary}
+                  />
+                </View>
+              }
+              onPress={() => {
+                /* picker not wired in Phase 1 */
+              }}
+            />
+            <View style={separatorStyle} />
+            <PreferenceRow
+              icon="notifications-outline"
+              label="Friend Group Updates"
+              description="Get pinged when friends pin new events."
+              right={
+                <Switch
+                  value={notifyFriends}
+                  onValueChange={setNotifyFriends}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.action,
+                  }}
+                  thumbColor={
+                    notifyFriends ? theme.colors.black : theme.colors.background
+                  }
+                  ios_backgroundColor={theme.colors.border}
                 />
-              </View>
-            }
-            onPress={() => {
-              /* picker not wired in Phase 1 */
-            }}
-          />
-          <ShelfDivider variant="hairline" />
-          <PreferenceRow
-            label="Friend Group Updates"
-            description="Get pinged when friends pin new events."
-            right={
-              <Switch
-                value={notifyFriends}
-                onValueChange={setNotifyFriends}
-                trackColor={{
-                  false: theme.colors.border,
-                  true: theme.colors.action,
-                }}
-                thumbColor={
-                  notifyFriends ? theme.colors.black : theme.colors.background
-                }
-                ios_backgroundColor={theme.colors.border}
-              />
-            }
-          />
-          <ShelfDivider variant="hairline" />
-          <PreferenceRow
-            label="Upload Mode"
-            description="High Quality keeps every pixel; Data Saver is lighter on bandwidth."
-            stacked
-            right={
-              <SegmentedControl<UploadMode>
-                full
-                value={uploadMode}
-                onChange={setUploadMode}
-                options={[
-                  { label: 'High Quality', value: 'hq' },
-                  { label: 'Data Saver', value: 'ds' },
-                ]}
-              />
-            }
-          />
-          <ShelfDivider variant="hairline" />
-          <PreferenceRow
-            label="Appearance"
-            stacked
-            right={
-              <SegmentedControl<Appearance>
-                full
-                value={appearance}
-                onChange={onAppearanceChange}
-                options={[
-                  { label: 'Light', value: 'light' },
-                  { label: 'Dark', value: 'dark' },
-                ]}
-              />
-            }
-          />
+              }
+            />
+            <View style={separatorStyle} />
+            <PreferenceRow
+              icon="cloud-upload-outline"
+              label="Upload Mode"
+              description="High Quality keeps every pixel; Data Saver uses less bandwidth."
+              stacked
+              right={
+                <SegmentedControl<UploadMode>
+                  full
+                  value={uploadMode}
+                  onChange={setUploadMode}
+                  options={[
+                    { label: 'High Quality', value: 'hq' },
+                    { label: 'Data Saver', value: 'ds' },
+                  ]}
+                />
+              }
+            />
+            <View style={separatorStyle} />
+            <PreferenceRow
+              icon="contrast-outline"
+              label="Appearance"
+              description="Match your pantry to light or dark mode."
+              stacked
+              right={
+                <SegmentedControl<Appearance>
+                  full
+                  value={appearance}
+                  onChange={onAppearanceChange}
+                  options={[
+                    { label: 'Light', value: 'light' },
+                    { label: 'Dark', value: 'dark' },
+                  ]}
+                />
+              }
+            />
+          </View>
         </View>
 
-        <ShelfDivider variant="gold" style={styles.shelfSpace} />
-
-        <SectionHeader title="Privacy" />
-        <View style={groupedCardStyle}>
-          <PreferenceRow
-            label="Personal Fridge"
-            description="Choose who can see your pinned events and memories."
-            stacked
-            right={
-              <SegmentedControl<FridgeVisibility>
-                full
-                value={fridgeVisibility}
-                onChange={setFridgeVisibility}
-                options={[
-                  { label: 'Public to Campus', value: 'public' },
-                  { label: 'Friends Only', value: 'friends' },
-                ]}
-              />
-            }
-          />
+        <View style={styles.section}>
+          <SectionHeader title="Privacy" />
+          <View style={cardBaseStyle}>
+            <PreferenceRow
+              icon="lock-closed-outline"
+              label="Personal Fridge"
+              description="Choose who can see your pinned events and memories."
+              stacked
+              right={
+                <SegmentedControl<FridgeVisibility>
+                  full
+                  value={fridgeVisibility}
+                  onChange={setFridgeVisibility}
+                  options={[
+                    { label: 'Campus', value: 'public' },
+                    { label: 'Friends Only', value: 'friends' },
+                  ]}
+                />
+              }
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -202,29 +226,47 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  header: {
-    paddingHorizontal: SCREEN_PAD,
-    paddingTop: 8,
-    paddingBottom: 12,
-  },
   scrollContent: {
     paddingHorizontal: SCREEN_PAD,
-    paddingTop: 4,
+    paddingTop: 8,
   },
-  shelfSpace: {
-    marginVertical: 16,
-  },
-  statsRow: {
+  hero: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     gap: 12,
+    paddingBottom: 12,
   },
-  groupedCard: {
+  heroCopy: {
+    flex: 1,
+  },
+  section: {
+    marginTop: 24,
+  },
+  panel: {
     borderWidth: 1,
-    paddingVertical: 4,
+    paddingVertical: 2,
+  },
+  statsPanel: {
+    minHeight: 94,
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  statDivider: {
+    width: StyleSheet.hairlineWidth,
+    marginVertical: 10,
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 48,
   },
   chevronRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    maxWidth: 128,
   },
 });

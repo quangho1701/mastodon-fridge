@@ -5,11 +5,13 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useTheme } from '../../theme';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/theme';
 
 interface PreferenceRowProps {
   label: string;
   description?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
   right?: React.ReactNode;
   onPress?: () => void;
   /** Stack the right element underneath the label instead of inline. Useful for wide segmented controls. */
@@ -19,6 +21,7 @@ interface PreferenceRowProps {
 export default function PreferenceRow({
   label,
   description,
+  icon,
   right,
   onPress,
   stacked = false,
@@ -33,27 +36,60 @@ export default function PreferenceRow({
         { minHeight: theme.layout.touchTargetMin },
       ]}
     >
-      <View style={styles.textCol}>
-        <Text
-          style={[theme.typography.body, { color: theme.colors.textPrimary }]}
-        >
-          {label}
-        </Text>
-        {description ? (
-          <Text
+      <View style={styles.primaryLine}>
+        {icon ? (
+          <View
             style={[
-              theme.typography.caption,
-              { color: theme.colors.textSecondary, marginTop: 2 },
+              styles.iconWrap,
+              {
+                backgroundColor: theme.dark
+                  ? theme.colors.ivorySurfaceWarm
+                  : theme.colors.background,
+                borderColor: theme.colors.cardBorder,
+              },
             ]}
           >
-            {description}
+            <Ionicons name={icon} size={18} color={theme.colors.action} />
+          </View>
+        ) : null}
+
+        <View style={styles.textCol}>
+          <Text
+            style={[
+              theme.typography.body,
+              {
+                color: theme.colors.textPrimary,
+                fontFamily: theme.typography.h3.fontFamily,
+                fontWeight: theme.typography.h3.fontWeight,
+                lineHeight: 22,
+              },
+            ]}
+          >
+            {label}
           </Text>
+          {description ? (
+            <Text
+              style={[
+                theme.typography.caption,
+                {
+                  color: theme.colors.textSecondary,
+                  lineHeight: 17,
+                  marginTop: 2,
+                },
+              ]}
+            >
+              {description}
+            </Text>
+          ) : null}
+        </View>
+
+        {!stacked && right !== undefined ? (
+          <View style={styles.rightInline}>{right}</View>
         ) : null}
       </View>
-      {right !== undefined ? (
-        <View style={stacked ? styles.rightStacked : styles.rightInline}>
-          {right}
-        </View>
+
+      {stacked && right !== undefined ? (
+        <View style={styles.rightStacked}>{right}</View>
       ) : null}
     </View>
   );
@@ -66,7 +102,7 @@ export default function PreferenceRow({
     <Pressable
       onPress={onPress}
       android_ripple={{ color: theme.colors.border }}
-      style={({ pressed }) => [pressed && { opacity: 0.6 }]}
+      style={({ pressed }) => [pressed && { opacity: 0.68 }]}
     >
       {content}
     </Pressable>
@@ -75,15 +111,24 @@ export default function PreferenceRow({
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 14,
     gap: 12,
   },
   rowStacked: {
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    gap: 10,
+    paddingVertical: 16,
+  },
+  primaryLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textCol: {
     flex: 1,

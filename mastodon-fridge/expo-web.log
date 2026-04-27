@@ -1,0 +1,19 @@
+
+> mastodon-fridge@1.0.0 web
+> expo start --web --port 19006
+
+Starting project at D:\Mastodon Fridge\mastodon-fridge
+Starting Metro Bundler
+Waiting on http://localhost:19006
+Logs for your project will appear below.
+Web .\index.ts ▓▓▓▓▓▓░░░░░░░░░░ 39.9% (113/179)
+Web Bundled 3372ms index.ts (753 modules)
+ LOG  [web] Logs will appear in the browser console
+Web Bundled 46ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 49ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
+Web .\index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web Bundled 58ms index.ts (1 module)
+ LOG  [web] Logs will appear in the browser console
