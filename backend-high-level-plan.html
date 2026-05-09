@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mastodon Fridge Backend High-Level Implementation Plan</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2433;
+      --muted: #5d6678;
+      --line: #d8dde8;
+      --panel: #ffffff;
+      --surface: #f5f7fb;
+      --blue: #003057;
+      --gold: #daaa00;
+      --green: #1f8a5b;
+      --red: #b42318;
+      --shadow: 0 16px 40px rgba(19, 31, 55, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 72px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--blue), #0f4c81);
+      color: white;
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(218, 170, 0, 0.45), rgba(218, 170, 0, 0));
+    }
+
+    h1, h2, h3 {
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 780px;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: 1.65rem;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 1.08rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+      font-size: 0.88rem;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    section {
+      margin-top: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fbfcff;
+    }
+
+    .card strong {
+      color: var(--blue);
+    }
+
+    ul, ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 8px 0;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .decision:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .label {
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .callout {
+      border-left: 5px solid var(--gold);
+      background: #fff9e6;
+      padding: 16px 18px;
+      border-radius: 14px;
+      margin: 18px 0 0;
+    }
+
+    .risk {
+      border-left-color: var(--red);
+      background: #fff4f2;
+    }
+
+    .ok {
+      border-left-color: var(--green);
+      background: #eefaf4;
+    }
+
+    .phase {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 18px;
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .phase:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .phase-badge {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf2f8;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      background: #eef2f7;
+      color: #162033;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+    }
+
+    @media (max-width: 800px) {
+      header, section {
+        padding: 22px;
+        border-radius: 20px;
+      }
+
+      .grid, .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .decision, .phase {
+        grid-template-columns: 1fr;
+      }
+
+      .phase-badge {
+        width: auto;
+        height: auto;
+        padding: 10px 14px;
+        display: inline-flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Mastodon Fridge Backend High-Level Implementation Plan</h1>
+      <p class="subtitle">
+        A pragmatic backend roadmap for a 50-user MVP: prioritize fast Expo Go/web testing, simple operations,
+        future-safe data modeling, and delayed production authentication hardening.
+      </p>
+      <div class="meta">
+        <span class="pill">Audience: senior developer review</span>
+        <span class="pill">Scope: backend planning only</span>
+        <span class="pill">Target: ~50 initial users</span>
+        <span class="pill">Source: current product discussion</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Executive Summary</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Recommended Backend Direction</h3>
+          <p>
+            Use Supabase as the primary backend platform for the MVP: Postgres database, Auth, Storage,
+            Row Level Security, and Edge Functions where server-side code is needed.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Authentication Strategy</h3>
+          <p>
+            Delay login enforcement during active frontend/backend testing, but model all user-owned data
+            with future auth fields from the beginning.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Testing Strategy</h3>
+          <p>
+            Use a temporary development identity so Expo Go and web testing are not blocked by repeated sign-ins.
+            Replace the dev identity with real Supabase Auth later.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Primary MVP Features</h3>
+          <p>
+            Events, Market discovery, customizable personal fridge layout, flyer/media storage, public event
+            galleries, and a later AI extraction integration.
+          </p>
+        </div>
+      </div>
+      <div class="callout ok">
+        <strong>Core principle:</strong> Delay authentication in the user experience, not in the data model.
+        This allows fast iteration now without requiring a database redesign later.
+      </div>
+    </section>
+
+    <section>
+      <h2>Confirmed Product Assumptions</h2>
+      <div class="decision">
+        <div class="label">Scale</div>
+        <div>Initial target is approximately 50 users, not a campus-wide launch.</div>
+      </div>
+      <div class="decision">
+        <div class="label">Backend Platform</div>
+        <div>Prefer Supabase for lower operational overhead and faster MVP delivery.</div>
+      </div>
+      <div class="decision">
+        <div class="label">Initial Auth UX</div>
+        <div>No required login during early testing. Use a temporary development user identity.</div>
+      </div>
+      <div class="decision">
+        <div class="label">Production Auth Direction</div>
+        <div>Google sign-in first, followed by optional PFW student verification.</div>
+      </div>
+      <div class="decision">
+        <div class="label">PFW Verification</div>
+        <div>Optional later verification via a code or magic link sent to an <code>@pfw.edu</code> Outlook inbox.</div>
+      </div>
+      <div class="decision">
+        <div class="label">Galleries</div>
+        <div>Event galleries are public to all signed-in users for the MVP.</div>
+      </div>
+      <div class="decision">
+        <div class="label">Deployment</div>
+        <div>Undecided. Supabase hosted services should cover the initial backend needs.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recommended Architecture</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>Client</h3>
+          <ul>
+            <li>Expo React Native app</li>
+            <li>Expo Go and web testing support</li>
+            <li>Temporary dev identity provider</li>
+            <li>Later Supabase Auth session provider</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Supabase</h3>
+          <ul>
+            <li>Postgres for relational data</li>
+            <li>Storage for flyers and gallery media</li>
+            <li>Auth for Google sign-in</li>
+            <li>RLS policies before production use</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Server-Side Functions</h3>
+          <ul>
+            <li>AI extraction endpoint</li>
+            <li>Optional media moderation</li>
+            <li>Privileged storage operations</li>
+            <li>Future notification jobs</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>Recommended default:</strong> avoid a separate Express/Fastify backend for the first 50-user MVP
+        unless a feature clearly requires long-running custom server logic. Supabase reduces infrastructure surface area.
+      </div>
+    </section>
+
+    <section>
+      <h2>Authentication Assessment</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>Pros</th>
+            <th>Cons</th>
+            <th>Recommendation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Google sign-in only</td>
+            <td>Simple, familiar, quick to implement, low friction.</td>
+            <td>Does not prove PFW affiliation.</td>
+            <td>Use for production login baseline.</td>
+          </tr>
+          <tr>
+            <td>PFW email OTP only</td>
+            <td>Campus-scoped without official school SSO.</td>
+            <td>More friction; still only proves mailbox access, not active enrollment.</td>
+            <td>Do not use as the first required login path.</td>
+          </tr>
+          <tr>
+            <td>Google + optional PFW verification</td>
+            <td>Good usability now, campus verification later.</td>
+            <td>Two-step model adds product complexity.</td>
+            <td>Best fit for current MVP direction.</td>
+          </tr>
+          <tr>
+            <td>Official Microsoft/PFW SSO</td>
+            <td>Strongest institutional trust model.</td>
+            <td>Likely requires school approval, Azure configuration, and Duo/tenant constraints.</td>
+            <td>Defer until official partnership is realistic.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout risk">
+        <strong>Security limitation:</strong> optional PFW verification proves access to an <code>@pfw.edu</code>
+        mailbox, not official enrollment. Stronger identity requires official university SSO or manual approval.
+      </div>
+    </section>
+
+    <section>
+      <h2>High-Level Data Model</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Purpose</th>
+            <th>Important Fields</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>profiles</code></td>
+            <td>App-specific user profile connected to future Supabase Auth user.</td>
+            <td><code>id</code>, <code>display_name</code>, <code>avatar_url</code>, <code>pfw_email</code>, <code>pfw_verified_at</code></td>
+          </tr>
+          <tr>
+            <td><code>events</code></td>
+            <td>Campus events visible in Market and attachable to fridges.</td>
+            <td><code>id</code>, <code>title</code>, <code>starts_at</code>, <code>ends_at</code>, <code>location</code>, <code>flyer_image_path</code>, <code>created_by</code></td>
+          </tr>
+          <tr>
+            <td><code>fridge_items</code></td>
+            <td>User-specific pins, stickers, notes, and layout state on the personal fridge.</td>
+            <td><code>id</code>, <code>user_id</code>, <code>event_id</code>, <code>x</code>, <code>y</code>, <code>rotation</code>, <code>scale</code>, <code>z_index</code>, <code>sticker_type</code></td>
+          </tr>
+          <tr>
+            <td><code>gallery_media</code></td>
+            <td>Public event photos/videos uploaded by users.</td>
+            <td><code>id</code>, <code>event_id</code>, <code>uploaded_by</code>, <code>media_path</code>, <code>media_type</code>, <code>moderation_status</code></td>
+          </tr>
+          <tr>
+            <td><code>media_stickers</code></td>
+            <td>Sticker/reaction overlays placed on gallery media.</td>
+            <td><code>id</code>, <code>media_id</code>, <code>placed_by</code>, <code>sticker_type</code>, <code>x_percent</code>, <code>y_percent</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <strong>Key modeling decision:</strong> even before real auth is enabled, user-owned records should include
+        <code>user_id</code> or <code>created_by</code>. During development, those fields point to a seeded dev user.
+      </div>
+    </section>
+
+    <section>
+      <h2>Implementation Phases</h2>
+      <div class="phase">
+        <div class="phase-badge">0</div>
+        <div>
+          <h3>Backend Foundation and Decisions</h3>
+          <ul>
+            <li>Create Supabase project and environment configuration.</li>
+            <li>Define schema migrations for profiles, events, fridge items, gallery media, and media stickers.</li>
+            <li>Create one seeded development user for auth-free testing.</li>
+            <li>Document which features are dev-only and not production secure yet.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">1</div>
+        <div>
+          <h3>Events and Market Discovery</h3>
+          <ul>
+            <li>Build event creation, event listing, event detail, and search/filter support.</li>
+            <li>Use public read access for signed-in users later; use dev-mode access during testing.</li>
+            <li>Keep Market independent from AI extraction so manual events work first.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">2</div>
+        <div>
+          <h3>Personal Fridge Customization</h3>
+          <ul>
+            <li>Persist per-user fridge items and layout metadata.</li>
+            <li>Support drag position, rotation, scale, z-order, sticker choice, and optional note text.</li>
+            <li>Treat customization as a cross-functional feature: frontend gestures plus backend persistence.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">3</div>
+        <div>
+          <h3>Storage for Flyers and Gallery Media</h3>
+          <ul>
+            <li>Create storage buckets for flyers, gallery media, and avatars if needed.</li>
+            <li>Compress images before upload and store only paths/metadata in Postgres.</li>
+            <li>Add file size and media type limits appropriate for a 50-user MVP.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">4</div>
+        <div>
+          <h3>Public Event Galleries</h3>
+          <ul>
+            <li>Allow users to upload media to event galleries.</li>
+            <li>Allow all signed-in users to view event gallery media.</li>
+            <li>Store sticker overlays separately from the original media asset.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">5</div>
+        <div>
+          <h3>AI Flyer Extraction</h3>
+          <ul>
+            <li>First stabilize manual event creation and confirmation UI.</li>
+            <li>Add an AI extraction function that returns structured event fields.</li>
+            <li>Validate AI output before saving and always allow manual correction.</li>
+            <li>Add scan rate limits before broad testing to control cost.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">6</div>
+        <div>
+          <h3>Google Auth Integration</h3>
+          <ul>
+            <li>Replace the temporary dev identity with Supabase Auth user sessions.</li>
+            <li>Backfill or migrate dev data if needed.</li>
+            <li>Ensure fridge items, uploads, and profile records use the authenticated user ID.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">7</div>
+        <div>
+          <h3>Optional PFW Verification</h3>
+          <ul>
+            <li>Add an optional prompt: “Verify as a PFW student?”</li>
+            <li>Send verification link or code to an <code>@pfw.edu</code> email address.</li>
+            <li>Store verification status on the profile without making it required for basic use.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-badge">8</div>
+        <div>
+          <h3>Security and Production Hardening</h3>
+          <ul>
+            <li>Enable and test Row Level Security policies.</li>
+            <li>Restrict writes to authenticated owners where appropriate.</li>
+            <li>Add moderation status for public gallery uploads.</li>
+            <li>Add basic audit logging, error tracking, and backup review.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Definition of Done Per Backend Phase</h2>
+      <ul>
+        <li>Database schema is migrated through a repeatable migration path.</li>
+        <li>Data ownership fields are present even if real auth is not enabled yet.</li>
+        <li>Expo Go and web can test the feature without repeated login during early development.</li>
+        <li>Every write path validates required fields and rejects invalid data.</li>
+        <li>Every public surface has a clear privacy assumption documented.</li>
+        <li>Senior developers can review table design, storage policy, and security gaps before production use.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Open Questions for Senior Review</h2>
+      <ol>
+        <li>Should Supabase direct client access be used for most CRUD, or should critical writes go through Edge Functions?</li>
+        <li>What is the minimum acceptable Row Level Security policy set before beta testing with real users?</li>
+        <li>Should gallery media uploads require moderation before becoming visible, or can moderation be added after private beta?</li>
+        <li>Should PFW verification ever gate write access, or remain a profile badge/trust signal?</li>
+        <li>What storage limits should be enforced per user, per event, and globally for the MVP?</li>
+      </ol>
+    </section>
+
+    <p class="footer-note">
+      This document intentionally replaces prior backend planning assumptions for review purposes and reflects the current MVP direction.
+    </p>
+  </main>
+</body>
+</html>

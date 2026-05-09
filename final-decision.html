@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Decision — Mastodon Fridge Backend MVP</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d2433;
+      --muted: #5d6678;
+      --line: #d8dde8;
+      --panel: #ffffff;
+      --surface: #f5f7fb;
+      --blue: #003057;
+      --gold: #daaa00;
+      --green: #1f8a5b;
+      --red: #b42318;
+      --amber: #b45309;
+      --purple: #6046a6;
+      --shadow: 0 16px 40px rgba(19, 31, 55, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.58;
+    }
+
+    main {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 72px;
+    }
+
+    header.hero {
+      background: linear-gradient(135deg, #0b3d2c 0%, #1f8a5b 60%, #d6a91a 100%);
+      color: white;
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header.hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -90px -140px auto;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+    }
+
+    h1, h2, h3, h4 { line-height: 1.18; margin: 0; }
+
+    h1 {
+      max-width: 880px;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 { font-size: 1.06rem; margin-bottom: 8px; color: var(--blue); }
+    h4 { font-size: 0.96rem; margin-bottom: 6px; }
+
+    p { margin: 0 0 12px; }
+
+    .subtitle {
+      max-width: 880px;
+      margin-top: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.05rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: rgba(255, 255, 255, 0.18);
+      color: white;
+      font-size: 0.86rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    section {
+      margin-top: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fbfcff;
+    }
+
+    ul, ol { margin: 0; padding-left: 20px; }
+    li { margin: 7px 0; }
+
+    .decision {
+      border-left: 5px solid var(--green);
+      background: #eefaf4;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin: 14px 0 0;
+    }
+
+    .decision .stamp {
+      display: inline-block;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      font-size: 0.74rem;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .concede {
+      border-left: 5px solid var(--amber);
+      background: #fff7ec;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin: 14px 0 0;
+    }
+
+    .concede .stamp {
+      display: inline-block;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      font-size: 0.74rem;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf2f8;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92em;
+      background: #eef2f7;
+      color: #162033;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 14px;
+      overflow-x: auto;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      margin: 12px 0 0;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      white-space: nowrap;
+    }
+
+    .tag.yes { background: var(--green); }
+    .tag.no  { background: var(--red); }
+    .tag.later { background: var(--purple); }
+    .tag.tweak { background: var(--amber); }
+
+    .callout {
+      border-left: 5px solid var(--gold);
+      background: #fff9e6;
+      padding: 15px 18px;
+      border-radius: 14px;
+      margin: 16px 0 0;
+    }
+
+    .callout.ok   { border-left-color: var(--green); background: #eefaf4; }
+    .callout.risk { border-left-color: var(--red);   background: #fff4f2; }
+
+    .phase {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 18px;
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .phase:first-of-type { border-top: 0; padding-top: 0; }
+
+    .phase-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: white;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+
+    .phase .est {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--muted);
+      margin-left: 8px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .checklist li {
+      list-style: none;
+      position: relative;
+      padding-left: 26px;
+    }
+
+    .checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 2px solid var(--green);
+      background: white;
+    }
+
+    .muted { color: var(--muted); }
+
+    .footer-note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      header.hero, section { padding: 22px; border-radius: 20px; }
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      .phase { grid-template-columns: 1fr; }
+      .phase-badge { width: auto; height: auto; padding: 10px 14px; display: inline-flex; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <h1>Final Decision — Mastodon Fridge Backend MVP</h1>
+      <p class="subtitle">
+        This document closes the loop across <code>backend-high-level-plan.html</code>,
+        <code>backend-plan-review.html</code>, and <code>2nd-assess-backend-plan.html</code>.
+        Every contested point now has a single, binding answer. Goal: a 50-user closed beta that ships in
+        ~2.5–3.5 weeks of focused work and is safe enough to put real students in front of.
+      </p>
+      <div class="meta">
+        <span class="pill">Final pass</span>
+        <span class="pill">Date: 2026-05-08</span>
+        <span class="pill">Target: ~50 PFW users</span>
+        <span class="pill">Stack: Expo + Supabase</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Bottom Line</h2>
+      <p>
+        The second assessment is correct on every substantive disagreement with my original review. The Microsoft 365
+        / Outlook fact about PFW email is the one that matters most — that part of my review was an unverified
+        assumption and the second assessment was right to push back. The storage cap math and the "add friends and
+        notifications now" overscope were also fair corrections.
+      </p>
+      <p>
+        With those concessions made, the second assessment is ~90% ready to execute. The remaining 10% is in
+        choices it left intentionally soft ("maybe", "benchmark first", "auto-approve if too slow") that a
+        ship-fast MVP needs to commit to. This document picks one option in each of those places and stops
+        debating.
+      </p>
+      <div class="callout ok">
+        <strong>Verdict:</strong> Adopt the second assessment as the working plan with the seven concrete
+        commitments below. After that, no more planning rounds — start building Phase 0.
+      </div>
+    </section>
+
+    <section>
+      <h2>Concessions to the Second Assessment</h2>
+      <p class="muted">Where the second assessment overrides my original review.</p>
+
+      <div class="concede">
+        <span class="stamp">Concede — factual error</span>
+        <h3>PFW students do not have Google Workspace accounts</h3>
+        <p style="margin:0">
+          PFW student email runs on Microsoft 365 / Outlook. The <code>hd=pfw.edu</code> proposal in the original
+          review assumed a Google Workspace tenant that does not exist. Drop it entirely. Auth direction stays
+          <strong>Google sign-in for general identity + optional <code>@pfw.edu</code> email OTP for the verified
+          badge</strong>, exactly as the original plan and the second assessment describe.
+        </p>
+      </div>
+
+      <div class="concede">
+        <span class="stamp">Concede — wrong number</span>
+        <h3>15 GB global storage cap is not free-tier compatible</h3>
+        <p style="margin:0">
+          Supabase free tier includes 1 GB of file storage. The 15 GB figure assumed Pro. Replace with a
+          free-tier-compatible cap and an explicit upgrade trigger.
+        </p>
+      </div>
+
+      <div class="concede">
+        <span class="stamp">Concede — overscope</span>
+        <h3><code>friendships</code>, <code>notifications</code>, and <code>event_attendance</code> were premature</h3>
+        <p style="margin:0">
+          The Friends tab is a placeholder. There is no notification feature. The UI does not currently distinguish
+          "pinned to fridge" from "RSVP'd." Adding tables ahead of features is exactly what the second assessment
+          rightly called out. <strong>Defer all three</strong>; add when the screens require them.
+        </p>
+      </div>
+
+      <div class="concede">
+        <span class="stamp">Concede — overengineering</span>
+        <h3>Soft delete on every table is too much for a 50-user MVP</h3>
+        <p style="margin:0">
+          <code>deleted_at</code> on every table forces every query to add <code>WHERE deleted_at IS NULL</code>
+          and complicates RLS. Limit soft delete to <strong><code>events</code> and <code>gallery_media</code></strong>
+          (where audit/dispute matters). Hard delete is fine for <code>fridge_items</code>, <code>media_stickers</code>,
+          and <code>media_reports</code>.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Seven Commitments That Close the Remaining Open Questions</h2>
+      <p class="muted">
+        The second assessment left these intentionally soft. Shipping fast means picking one and moving on.
+      </p>
+
+      <div class="decision">
+        <span class="stamp">Decision 1 — Moderation default</span>
+        <h3>Closed beta uploads default to <code>approved</code>, not <code>pending</code></h3>
+        <p style="margin:0">
+          The schema supports <code>pending | approved | rejected | removed</code>. For the 50-user invited cohort,
+          default new uploads to <code>approved</code> — these are people you trust by invitation. Reports flag
+          content; an admin can mark <code>removed</code>. When the app opens beyond the invited cohort, flip the
+          default to <code>pending</code> in one migration. This avoids shipping a moderation queue with no human
+          to drain it.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 2 — AI model starting point</span>
+        <h3>Phase 5 starts with Claude Haiku 4.5; escalate to Sonnet 4.6 only if accuracy fails</h3>
+        <p style="margin:0">
+          Pick a default and benchmark in flight. Haiku 4.5 (<code>claude-haiku-4-5-20251001</code>) is the cheapest
+          vision-capable Claude model and is the right baseline. After the first 20–30 real PFW flyers, if title /
+          date / location extraction is below ~85% field accuracy, swap to Sonnet 4.6
+          (<code>claude-sonnet-4-6</code>) without changing the Edge Function shape.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 3 — Dev auth mechanics</span>
+        <h3>Real Supabase Auth users with email/password, auto-login gated on <code>__DEV__</code></h3>
+        <p style="margin:0">
+          Create two Auth users: <code>dev1@local.test</code> and <code>dev2@local.test</code>. Credentials live in
+          a local <code>.env.local</code> as <code>EXPO_PUBLIC_DEV_AUTH_EMAIL</code> /
+          <code>EXPO_PUBLIC_DEV_AUTH_PASSWORD</code>. The client only auto-logs-in when <code>__DEV__ === true</code>
+          and the env vars are present. Production builds (no env vars injected) cannot dev-auth even by accident.
+          RLS stays on the entire time.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 4 — Realtime</span>
+        <h3>No realtime subscriptions in MVP</h3>
+        <p style="margin:0">
+          Pull-to-refresh on the gallery, refetch on tab focus. The Supabase Realtime client adds complexity (channel
+          lifecycle, reconnection) that is not justified for 50 users. Revisit only if "photos appearing as friends
+          upload" becomes a hero moment in user testing.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 5 — Storage tier and caps</span>
+        <h3>Free tier with image-only uploads; storage alarm at 750 MB; upgrade trigger at 850 MB</h3>
+        <p style="margin:0">
+          Per-user: 100 MB total, 5 MB per image, 30 photos per event per user. Per-event: 500 MB total. Global
+          alarm at 750 MB used (~75% of free tier). At 850 MB used, upgrade to Supabase Pro and lift per-user caps.
+          Video disabled for MVP entirely — if a user picks a video, the client rejects it before upload. Compress
+          client-side via <code>expo-image-manipulator</code> at ~1600px longest edge / JPEG q70.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 6 — Storage buckets and access mode</span>
+        <h3>All buckets private; reads through signed URLs from the server</h3>
+        <p style="margin:0">
+          Three buckets: <code>flyers</code>, <code>gallery</code>, <code>avatars</code>, all private. The client
+          requests a signed read URL via a tiny RPC / Edge Function that verifies the requesting user is authenticated
+          and (for gallery media) that the linked row's <code>moderation_status</code> is not <code>removed</code>.
+          More conservative than the second assessment's "public reads after moderation"; same operational cost; far
+          fewer ways to leak content. Path convention:
+          <code>{bucket}/{user_id}/{uuid}.{ext}</code>, gallery uses <code>gallery/{event_id}/{user_id}/{uuid}.{ext}</code>.
+        </p>
+      </div>
+
+      <div class="decision">
+        <span class="stamp">Decision 7 — Migrations and env hygiene</span>
+        <h3>Plain <code>supabase/migrations</code> folder, applied via <code>supabase db push</code>; no CI yet</h3>
+        <p style="margin:0">
+          Every schema change is a numbered SQL file in <code>supabase/migrations</code>. Apply via the Supabase
+          CLI; no migration framework, no GitHub Actions yet. Two Supabase projects: <code>dev</code> (free tier,
+          throwaway) and <code>prod</code> (created at Phase 6, before real users). Env files: <code>.env.local</code>
+          for dev, <code>.env.production</code> committed never. <code>.env.local</code> in <code>.gitignore</code>.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Final Schema (committed)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Add now?</th>
+            <th>Notes / key fields</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>profiles</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code> (FK <code>auth.users</code>), <code>display_name</code>, <code>avatar_path</code>,
+              <code>pfw_email</code>, <code>pfw_verified_at</code>, <code>is_admin</code>,
+              <code>created_at</code>, <code>updated_at</code>. No <code>is_trusted</code> — the closed-cohort
+              moderation default makes it unnecessary.
+            </td>
+          </tr>
+          <tr>
+            <td><code>events</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code>, <code>title</code>, <code>description</code>, <code>starts_at</code>,
+              <code>ends_at</code>, <code>location</code>, <code>flyer_image_path</code>,
+              <code>created_by</code>, <code>created_at</code>, <code>updated_at</code>, <code>deleted_at</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><code>fridge_items</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code>, <code>user_id</code>, <code>event_id</code> (nullable), <code>x</code>, <code>y</code>,
+              <code>rotation</code>, <code>scale</code>, <code>z_index</code>, <code>sticker_type</code>,
+              <code>note_text</code>, <code>created_at</code>, <code>updated_at</code>. Hard delete only.
+            </td>
+          </tr>
+          <tr>
+            <td><code>gallery_media</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code>, <code>event_id</code>, <code>uploaded_by</code>, <code>media_path</code>,
+              <code>media_type</code> (always <code>image</code> for MVP), <code>moderation_status</code>
+              (default <code>approved</code> for closed beta), <code>reviewed_by</code>, <code>reviewed_at</code>,
+              <code>created_at</code>, <code>updated_at</code>, <code>deleted_at</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><code>media_stickers</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code>, <code>media_id</code>, <code>placed_by</code>, <code>sticker_type</code>,
+              <code>x_percent</code>, <code>y_percent</code>, <code>created_at</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><code>media_reports</code></td>
+            <td><span class="tag yes">Yes</span></td>
+            <td>
+              <code>id</code>, <code>media_id</code>, <code>reporter_id</code>, <code>reason</code>,
+              <code>created_at</code>. No moderator workflow table — admin acts directly on
+              <code>gallery_media.moderation_status</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><code>event_attendance</code></td>
+            <td><span class="tag later">Defer</span></td>
+            <td>Add only when the UI distinguishes "going / interested" from pinning. Not in MVP.</td>
+          </tr>
+          <tr>
+            <td><code>friendships</code></td>
+            <td><span class="tag later">Defer</span></td>
+            <td>Friends tab is a placeholder. Build when there is a real friends feature.</td>
+          </tr>
+          <tr>
+            <td><code>notifications</code></td>
+            <td><span class="tag later">Defer</span></td>
+            <td>No active notification feature. Build with the first real trigger.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:18px">Indexes (in the same Phase 0 migration)</h3>
+      <ul>
+        <li><code>events(starts_at)</code> — Market list ordering.</li>
+        <li><code>events(created_by)</code> — "events I created" filter.</li>
+        <li><code>fridge_items(user_id)</code> — every fridge load.</li>
+        <li><code>gallery_media(event_id, created_at desc)</code> — gallery feed.</li>
+        <li><code>gallery_media(moderation_status)</code> — admin queue lookup.</li>
+        <li><code>media_reports(media_id)</code> — report aggregation.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Day-1 Environment</h2>
+      <h3>Expo client (<code>.env.local</code>, gitignored)</h3>
+<pre>EXPO_PUBLIC_SUPABASE_URL=https://&lt;dev-project&gt;.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=&lt;anon publishable key&gt;
+EXPO_PUBLIC_DEV_AUTH_EMAIL=dev1@local.test
+EXPO_PUBLIC_DEV_AUTH_PASSWORD=&lt;throwaway&gt;</pre>
+
+      <h3 style="margin-top:14px">Edge Function secrets (<code>supabase secrets set</code>)</h3>
+<pre>ANTHROPIC_API_KEY=&lt;anthropic key&gt;
+# Added in Phase 6:
+# GOOGLE_OAUTH_CLIENT_SECRET=...
+# PFW_OTP_SENDER_API_KEY=...   (provider TBD: Resend or Postmark)</pre>
+
+      <div class="callout risk">
+        <strong>Hard rule:</strong> The Supabase service-role key never leaves the Supabase dashboard / Edge Function
+        env. It is not in <code>.env.local</code>, not in any commit, not in any CI variable for the client.
+      </div>
+    </section>
+
+    <section>
+      <h2>Final Phase Plan</h2>
+      <p class="muted">
+        Eight phases from the original plan compressed into seven, with concrete time estimates for one focused
+        developer.
+      </p>
+
+      <div class="phase">
+        <div class="phase-badge">0</div>
+        <div>
+          <h3>Foundation <span class="est">~2 days</span></h3>
+          <ul>
+            <li>Create dev Supabase project and the two dev Auth users.</li>
+            <li>Write the first migration: schema, RLS policies, indexes — all in one file.</li>
+            <li>Wire the Expo client: anon key, dev auto-login, basic data layer.</li>
+            <li>Scaffold one Edge Function (<code>extract-flyer</code>) with the Anthropic key set; return a stub.</li>
+            <li>Verify cross-user isolation by attempting a forbidden read from <code>dev2</code> against
+              <code>dev1</code>'s <code>fridge_items</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">1</div>
+        <div>
+          <h3>Events &amp; Market <span class="est">~3 days</span></h3>
+          <ul>
+            <li>Manual event create / list / detail backed by Supabase.</li>
+            <li><code>ILIKE</code> search on title + description; no <code>pg_trgm</code>, no FTS.</li>
+            <li>RLS: any authenticated user reads non-deleted events; only <code>created_by</code> can update.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">2</div>
+        <div>
+          <h3>Fridge customization <span class="est">~2 days</span></h3>
+          <ul>
+            <li>Persist <code>fridge_items</code> with debounced writes (1.5s, plus on screen exit and app background).</li>
+            <li>Hold edits in memory + <code>AsyncStorage</code>; flush via batched <code>upsert</code>.</li>
+            <li>RLS: owner-only read and write on <code>fridge_items</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">3</div>
+        <div>
+          <h3>Storage + media safety skeleton <span class="est">~2 days</span></h3>
+          <ul>
+            <li>Create the three private buckets and storage RLS policies.</li>
+            <li>Client-side image compression before upload; reject anything over 5 MB.</li>
+            <li>
+              Add the signed-URL RPC (<code>get_signed_media_url(media_id)</code>) that checks auth + moderation
+              status and returns a short-lived URL.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">4</div>
+        <div>
+          <h3>Public galleries with reports <span class="est">~3 days</span></h3>
+          <ul>
+            <li>Upload to <code>gallery_media</code> with <code>moderation_status='approved'</code> default.</li>
+            <li>Gallery feed pulls signed URLs through the RPC.</li>
+            <li>Tap-to-report writes <code>media_reports</code>; admin marks <code>removed</code> via a tiny admin-only screen or SQL.</li>
+            <li>Sticker overlays as separate <code>media_stickers</code> rows.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">5</div>
+        <div>
+          <h3>AI flyer extraction <span class="est">~3 days</span></h3>
+          <ul>
+            <li>Edge Function calls Claude Haiku 4.5 with the flyer image; returns a strict JSON schema.</li>
+            <li>Client validates against the schema; <code>ConfirmScreen</code> always allows manual correction.</li>
+            <li>Per-user rate limit: 20 extractions per day, enforced server-side.</li>
+            <li>After the first 20–30 real flyers, evaluate accuracy; swap to Sonnet 4.6 if needed.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">6</div>
+        <div>
+          <h3>Production auth + prod project <span class="est">~3 days</span></h3>
+          <ul>
+            <li>Create the prod Supabase project and run all migrations.</li>
+            <li>Replace dev auto-login with Google sign-in via Supabase Auth.</li>
+            <li>Optional <code>@pfw.edu</code> magic-link verification through a transactional email provider (Resend or Postmark — pick one in this phase).</li>
+            <li>Verified state stored in <code>profiles.pfw_verified_at</code> as a badge, not a gate.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-badge">7</div>
+        <div>
+          <h3>Ship gate <span class="est">~1 day</span></h3>
+          <ul>
+            <li>RLS audit: a script that signs in as <code>dev2</code> and tries forbidden reads/writes against
+              <code>dev1</code>'s rows. Must fail every one.</li>
+            <li>Storage usage check: under 750 MB on dev, under 200 MB on prod at zero users.</li>
+            <li>Update <code>CLAUDE.md</code> and <code>AGENTS.md</code>: Firebase removed, Supabase added.</li>
+            <li>Confirm Supabase backup posture (free tier limits documented; Pro upgrade trigger noted).</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:18px">
+        Total: <strong>~19 working days</strong> ≈ 2.5–3.5 weeks for one focused developer including normal
+        slippage.
+      </p>
+    </section>
+
+    <section>
+      <h2>Ship Gate — MVP "done" checklist</h2>
+      <ul class="checklist">
+        <li>All 9 existing screens load against real Supabase data, not mocks.</li>
+        <li>End-to-end flow works: create event → pin to fridge → upload gallery photo → scan flyer → confirm.</li>
+        <li>Two test users see the same events and the same approved gallery, but only their own fridge.</li>
+        <li>Reports flow works end-to-end: report → admin removes → photo no longer returned by signed URL.</li>
+        <li>RLS audit script passes (dev2 cannot read or write dev1's owned data).</li>
+        <li>Total prod storage under 200 MB at zero real users; alarm wired at 750 MB.</li>
+        <li>No service-role key, Anthropic key, or OAuth secret reachable from the Expo bundle.</li>
+        <li><code>CLAUDE.md</code> and <code>AGENTS.md</code> reflect Supabase as the chosen backend.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Things this document deliberately does NOT include</h2>
+      <div class="grid">
+        <div class="card">
+          <h4>Account deletion / GDPR endpoint</h4>
+          <p style="margin:0" class="muted">
+            Not in MVP scope. Manual deletion via admin SQL is sufficient for a 50-user invited cohort. Add a real
+            "delete my account" path before the app opens beyond the cohort.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Moderation queue UI</h4>
+          <p style="margin:0" class="muted">
+            Closed-beta default of <code>approved</code> means there is no queue to drain. Reports flow into a
+            simple list; admin acts via SQL or a one-screen tool. Build a real moderator UI when the default flips
+            to <code>pending</code>.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Push notifications</h4>
+          <p style="margin:0" class="muted">
+            No notification feature ships. Adding Expo Notifications, FCM, and APNs config before there is a
+            trigger is exactly the overscope this plan is avoiding.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Observability beyond Supabase logs</h4>
+          <p style="margin:0" class="muted">
+            Sentry / PostHog / similar is deferred until after the ship gate. Supabase function logs and Postgres
+            logs are sufficient for diagnosing 50-user-scale issues.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Summary Table — every contested point, one binding answer</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Backend platform</td><td>Supabase (Postgres + RLS + Auth + Storage + Edge Functions)</td></tr>
+          <tr><td>Dev auth</td><td>2 real Auth users, auto-login gated on <code>__DEV__</code></td></tr>
+          <tr><td>RLS</td><td>On at table creation; written into the same migration</td></tr>
+          <tr><td>Moderation default (closed beta)</td><td><code>approved</code>; flip to <code>pending</code> when cohort opens</td></tr>
+          <tr><td>Storage buckets</td><td>All private; signed URLs via RPC</td></tr>
+          <tr><td>Storage tier</td><td>Free; alarm at 750 MB; upgrade trigger at 850 MB</td></tr>
+          <tr><td>Video uploads</td><td>Disabled for MVP</td></tr>
+          <tr><td>Realtime</td><td>Off; pull-to-refresh only</td></tr>
+          <tr><td>Search</td><td><code>ILIKE</code> on title + description</td></tr>
+          <tr><td>AI model</td><td>Haiku 4.5 baseline; Sonnet 4.6 if accuracy &lt; ~85%</td></tr>
+          <tr><td>AI rate limit</td><td>20 extractions / user / day, server-enforced</td></tr>
+          <tr><td>Auth (production)</td><td>Google sign-in + optional <code>@pfw.edu</code> magic-link</td></tr>
+          <tr><td>PFW <code>hd</code> idea</td><td>Dropped — PFW uses Microsoft 365, not Google Workspace</td></tr>
+          <tr><td>Soft delete</td><td>Only on <code>events</code> and <code>gallery_media</code></td></tr>
+          <tr><td>Friends / notifications / attendance tables</td><td>Deferred; add when UI demands them</td></tr>
+          <tr><td>Migrations</td><td><code>supabase/migrations</code> folder; <code>supabase db push</code>; no CI yet</td></tr>
+          <tr><td>Backups</td><td>Free-tier defaults documented; Pro upgrade noted as trigger</td></tr>
+          <tr><td>Total time estimate</td><td>~19 working days for one developer</td></tr>
+        </tbody>
+      </table>
+      <div class="callout ok">
+        <strong>Stop planning, start building.</strong> If a question comes up that this document does not answer,
+        choose the simpler option, write the choice in the migration's commit message, and keep moving. The next
+        version of this document is the running app.
+      </div>
+    </section>
+
+    <p class="footer-note">
+      Final decision document — supersedes the prior review and assessment for purposes of execution. Sibling files
+      (<code>backend-high-level-plan.html</code>, <code>backend-plan-review.html</code>,
+      <code>2nd-assess-backend-plan.html</code>) remain unchanged for historical reference.
+    </p>
+  </main>
+</body>
+</html>

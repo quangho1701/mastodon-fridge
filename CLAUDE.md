@@ -69,10 +69,13 @@ The theme barrel export is at `src/theme/index.ts`. Always import from `@/theme`
 
 ### Component Patterns
 
-- **Screen-scoped sub-components** live in sub-folders: `components/scanner/`, `components/market/`, `components/gallery/`
+- **Screen-scoped sub-components** live in sub-folders: `components/scanner/`, `components/market/`, `components/profile/`
 - **Fridge surface objects**: `Magnet`, `MastodonMagnet`, `LetterMagnet`, `StickyNote`, `Polaroid`, `Sticker`, `CrumpledNote`, `PhotoCard`, `PinnedItem` — all render as fridge collage items
-- **FridgeCollage** — masonry layout rendering fridge items inside `FridgeSurface` (stainless-steel texture background)
+- **FridgeFrame** — shared wrapper (`room wall → steel-bordered door → FridgeSurface`) used by both `FridgeScreen` and `EventGalleryScreen`. Always use `FridgeFrame` instead of composing `FridgeSurface` directly when building a full-screen fridge view.
+- **FridgeShelves / ShelfDivider** — render the `FridgeShelf[]` layout from `fridgeSeed.ts`; prefer the curated shelf system over `FridgeCollage` for new fridge content.
+- **FridgeCollage** — legacy masonry layout; still used for standalone collage contexts.
 - **ScanScreen** freezes camera preview during extraction (`cameraRef.current.pausePreview()`) and resumes on unmount
+- **TAB_BAR_CLEARANCE** — exported constant from `CustomTabBar.tsx`; import it in screens that need bottom padding to clear the floating tab bar (e.g. `ProfileScreen`).
 
 ### Installed Libraries
 
@@ -87,13 +90,19 @@ react-native-svg, react-native-safe-area-context, react-native-screens, react-na
 
 ### Data & Mocking
 
-[src/data/fridgeSeed.ts](mastodon-fridge/src/data/fridgeSeed.ts) provides mock event and sticker data. No real backend or auth is connected yet (Milestone 1+).
+[src/data/fridgeSeed.ts](mastodon-fridge/src/data/fridgeSeed.ts) defines the `FridgeItem` and `FridgeShelf` types plus mock layout data. Two layout systems co-exist:
+
+- **`fridgeLayout: FridgeShelf[]`** — curated shelf-based layout (current); each shelf is `curated | collage | divider`. `CuratedPlacement` uses `xPct` (0–1 fraction of shelf width) + `y` (px from shelf top) + optional `z` for layering.
+- **`fridgeSeed: FridgeItem[]`** — legacy flat list kept for standalone `FridgeCollage` usage.
+
+No real backend or auth is connected yet (Milestone 1+).
 
 ## Implementation Status
 
 The codebase is at **Milestone 0 complete / Milestone 1 in progress**:
-- Screens built: Onboarding (5-slide carousel), Entry, FridgeScreen, MarketScreen, ScanScreen, ConfirmScreen, EventGalleryScreen, FriendsScreen, ProfileScreen
+- All 9 screens built: Onboarding (5-slide carousel), Entry, FridgeScreen, MarketScreen, ScanScreen, ConfirmScreen, EventGalleryScreen, FriendsScreen, ProfileScreen
 - Navigation wired end-to-end; ScanScreen has camera + permission handling
+- ProfileScreen uses `SegmentedControl`, `StatBlock`, `PreferenceRow`, `ProfileHeader`, `SectionHeader` sub-components from `components/profile/`
 - No auth, no backend API calls, no real data — all UI is mock/seed
 
 Refer to [implementation-plan.md](implementation-plan.md) for milestone details and [UI_DEVELOPMENT_PLAN.md](UI_DEVELOPMENT_PLAN.md) for per-screen layout specs.
@@ -107,11 +116,12 @@ Refer to [implementation-plan.md](implementation-plan.md) for milestone details 
 
 ## Architecture Notes
 
-- **Personal Fridge (FridgeScreen):** Organic 3-column collage — absolute positioning or custom layout, NOT a FlatList grid. Items have slight random rotation (±3°).
+- **Personal Fridge (FridgeScreen):** Uses `FridgeFrame` → `FridgeShelves` with the curated `fridgeLayout`. Shelves use absolute positioning within a measured container — NOT a FlatList. Items carry ±rotation for organic feel.
 - **AI Scanner (ScanScreen → ConfirmScreen):** Camera capture → compress → POST to backend `/api/extract` (Claude Vision) → editable confirmation form. Backend not yet built.
 - **Sticker System:** Core UX — magnets, polaroids, sticky notes are draggable objects placed on the fridge surface.
 - **Theming:** Light mode uses shadows for depth; dark mode uses borders only. Always use `useTheme()` — never hardcode dark/light logic.
 - **Fonts:** `UnitedSansCond-Bold` (headings) and `AcuminPro-Regular` / `AcuminPro-Semibold` loaded via `expo-font` plugin in app.json. Use these exact family strings in StyleSheet.
+- **`components/profile/` barrel:** exports `ProfileHeader`, `StatBlock`, `SectionHeader`, `PreferenceRow`, `SegmentedControl` — import from `@/components/profile` (not individual files).
 
 ## Brand Rules
 
