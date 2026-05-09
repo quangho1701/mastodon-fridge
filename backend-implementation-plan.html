@@ -15,9 +15,6 @@
       --blue: #003057;
       --gold: #daaa00;
       --green: #1f8a5b;
-      --red: #b42318;
-      --amber: #b45309;
-      --purple: #6046a6;
       --shadow: 0 16px 40px rgba(19, 31, 55, 0.08);
     }
 
@@ -28,11 +25,11 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--surface);
       color: var(--ink);
-      line-height: 1.58;
+      line-height: 1.6;
     }
 
     main {
-      width: min(1160px, calc(100% - 32px));
+      width: min(960px, calc(100% - 32px));
       margin: 0 auto;
       padding: 40px 0 72px;
     }
@@ -41,7 +38,7 @@
       background: linear-gradient(135deg, var(--blue) 0%, #0f4c81 55%, #1f8a5b 100%);
       color: white;
       border-radius: 28px;
-      padding: 40px;
+      padding: 36px 40px;
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
@@ -51,49 +48,43 @@
       content: "";
       position: absolute;
       inset: auto -90px -140px auto;
-      width: 340px;
-      height: 340px;
+      width: 320px;
+      height: 320px;
       background: radial-gradient(circle, rgba(218, 170, 0, 0.4), rgba(218, 170, 0, 0));
     }
 
-    h1, h2, h3, h4 { line-height: 1.18; margin: 0; }
+    h1, h2, h3 { line-height: 1.2; margin: 0; }
 
     h1 {
-      max-width: 880px;
-      font-size: clamp(2rem, 4vw, 3.1rem);
+      font-size: clamp(1.9rem, 3.6vw, 2.6rem);
       letter-spacing: -0.03em;
     }
 
     h2 {
-      font-size: 1.55rem;
-      margin-bottom: 16px;
+      font-size: 1.45rem;
+      margin-bottom: 14px;
       letter-spacing: -0.02em;
     }
 
-    h3 { font-size: 1.06rem; margin-bottom: 8px; color: var(--blue); }
-    h4 {
-      font-size: 0.85rem;
-      margin-bottom: 8px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 800;
+    h3 {
+      font-size: 1.15rem;
+      color: var(--ink);
     }
 
     p { margin: 0 0 12px; }
 
     .subtitle {
-      max-width: 880px;
-      margin-top: 16px;
+      max-width: 760px;
+      margin-top: 14px;
       color: rgba(255, 255, 255, 0.92);
-      font-size: 1.05rem;
+      font-size: 1.02rem;
     }
 
     .meta {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
     .pill {
@@ -108,31 +99,13 @@
     }
 
     section {
-      margin-top: 28px;
+      margin-top: 24px;
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 28px;
+      border-radius: 22px;
+      padding: 26px 28px;
       box-shadow: var(--shadow);
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px;
-      background: #fbfcff;
-    }
-
-    ul, ol { margin: 0; padding-left: 20px; }
-    li { margin: 7px 0; }
 
     code {
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -143,33 +116,15 @@
       border-radius: 6px;
     }
 
-    pre {
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 16px 18px;
-      border-radius: 14px;
-      overflow-x: auto;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.85rem;
-      line-height: 1.55;
-      margin: 12px 0 0;
-    }
-
     .phase {
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 24px;
-      margin-top: 18px;
-      background: #fbfcff;
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 18px;
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
     }
 
-    .phase-head {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
+    .phase:first-of-type { border-top: 0; padding-top: 4px; }
 
     .phase-badge {
       width: 56px;
@@ -180,22 +135,20 @@
       background: var(--blue);
       color: white;
       font-weight: 900;
-      font-size: 1.1rem;
-      flex: 0 0 auto;
+      font-size: 1.15rem;
     }
 
     .phase-title {
-      flex: 1 1 auto;
-      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
     }
 
-    .phase-title h3 {
-      font-size: 1.25rem;
-      margin: 0 0 4px;
-      color: var(--ink);
-    }
+    .phase-title h3 { margin: 0; }
 
-    .phase-title .est {
+    .est {
       font-size: 0.78rem;
       font-weight: 800;
       color: var(--green);
@@ -203,125 +156,34 @@
       text-transform: uppercase;
     }
 
-    .goal {
-      border-left: 5px solid var(--gold);
-      background: #fff9e6;
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 14px;
-      font-size: 0.97rem;
-    }
-
-    .subgrid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-      margin-top: 14px;
-    }
-
-    .subgrid > div {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 14px 16px;
-      background: white;
-    }
-
-    .acceptance {
-      margin-top: 14px;
-      border-left: 5px solid var(--green);
-      background: #eefaf4;
-      border-radius: 12px;
-      padding: 12px 16px;
-    }
-
-    .acceptance h4 { color: var(--green); }
-
-    .gotcha {
-      margin-top: 12px;
-      border-left: 5px solid var(--red);
-      background: #fff4f2;
-      border-radius: 12px;
-      padding: 12px 16px;
-    }
-
-    .gotcha h4 { color: var(--red); }
-
-    .step-list {
-      counter-reset: step;
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .step-list li {
-      counter-increment: step;
-      position: relative;
-      padding-left: 36px;
-      margin: 10px 0;
-    }
-
-    .step-list li::before {
-      content: counter(step);
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--blue);
-      color: white;
-      font-weight: 900;
-      font-size: 0.78rem;
-      display: grid;
-      place-items: center;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      font-size: 0.93rem;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 11px 13px;
-      border-bottom: 1px solid var(--line);
-      vertical-align: top;
-    }
-
-    th {
-      background: #edf2f8;
-      color: var(--blue);
-      font-weight: 800;
-    }
-
-    tr:last-child td { border-bottom: 0; }
+    .phase p { margin: 0 0 8px; }
+    .phase p.muted { color: var(--muted); font-size: 0.94rem; margin: 0; }
 
     .callout {
       border-left: 5px solid var(--gold);
       background: #fff9e6;
       padding: 14px 18px;
       border-radius: 14px;
-      margin: 14px 0 0;
+      margin-top: 16px;
     }
 
-    .callout.ok   { border-left-color: var(--green); background: #eefaf4; }
-    .callout.risk { border-left-color: var(--red);   background: #fff4f2; }
+    .callout.ok { border-left-color: var(--green); background: #eefaf4; }
+
+    ul { margin: 6px 0 0; padding-left: 18px; }
+    li { margin: 4px 0; }
 
     .muted { color: var(--muted); }
 
     .footer-note {
-      margin-top: 28px;
+      margin-top: 24px;
       color: var(--muted);
       font-size: 0.9rem;
       text-align: center;
     }
 
-    @media (max-width: 820px) {
-      header.hero, section { padding: 22px; border-radius: 20px; }
-      .grid, .grid.three, .subgrid { grid-template-columns: 1fr; }
+    @media (max-width: 700px) {
+      header.hero, section { padding: 22px; border-radius: 18px; }
+      .phase { grid-template-columns: 1fr; }
       .phase-badge { width: 48px; height: 48px; font-size: 1rem; }
     }
   </style>
@@ -331,764 +193,175 @@
     <header class="hero">
       <h1>Backend Implementation Plan</h1>
       <p class="subtitle">
-        Phase-by-phase execution guide derived from <code>final-decision.html</code>. Each phase states the goal, the
-        deliverables, an ordered task list, the files touched, the acceptance criteria, and known gotchas. The
-        granular "how" — exact SQL, exact TypeScript — is left for build time, when you can use the model's thinking
-        to generate it against the live codebase.
+        High-level phase overview only. The granular planning — exact files, SQL, code shape — happens at build time
+        with the model's thinking against the live repo. Total: ~19 working days for one focused developer.
       </p>
       <div class="meta">
-        <span class="pill">Stack: Expo + Supabase</span>
-        <span class="pill">7 phases • ~19 working days</span>
-        <span class="pill">Solo developer</span>
-        <span class="pill">Target: 50-user closed beta</span>
+        <span class="pill">7 phases</span>
+        <span class="pill">Expo + Supabase</span>
+        <span class="pill">50-user closed beta</span>
       </div>
     </header>
 
     <section>
-      <h2>How to use this document</h2>
+      <h2>How to use this</h2>
       <p>
-        Walk phases in order — each one assumes the previous is complete. When you reach a phase, paste its
-        deliverables and the relevant existing screen/file paths into the model and let it generate the
-        implementation. Do not pre-implement code in this document: it goes stale fast and steers the model away
-        from current repo state.
+        Walk phases in order. When you reach a phase, hand the model the goal and ask it to plan and implement
+        against the current codebase. This document deliberately does <em>not</em> prescribe steps, files, or SQL
+        ahead of time — those decisions are better made with live context.
       </p>
-      <div class="grid three">
-        <div class="card">
-          <h4>Goal</h4>
-          <p style="margin:0">One sentence — what this phase changes about the app.</p>
-        </div>
-        <div class="card">
-          <h4>Deliverables</h4>
-          <p style="margin:0">Concrete artifacts (tables, screens, functions) that exist when the phase ends.</p>
-        </div>
-        <div class="card">
-          <h4>Order of operations</h4>
-          <p style="margin:0">Numbered steps. Follow them top-to-bottom; each step is verifiable on its own.</p>
-        </div>
-        <div class="card">
-          <h4>Files touched</h4>
-          <p style="margin:0">Existing files to wire up + new files to create. Use the repo path conventions in <code>CLAUDE.md</code>.</p>
-        </div>
-        <div class="card">
-          <h4>Done when</h4>
-          <p style="margin:0">A small checklist that proves the phase actually works end-to-end.</p>
-        </div>
-        <div class="card">
-          <h4>Gotchas</h4>
-          <p style="margin:0">Things that have eaten time on similar Supabase + Expo projects. Read these before starting.</p>
-        </div>
-      </div>
+      <p class="muted">
+        Reference <code>final-decision.html</code> for the binding architectural decisions. This document is the
+        order in which to apply them.
+      </p>
     </section>
 
     <section>
-      <h2>Pre-flight (~half day, before Phase 0)</h2>
-
-      <h3>Accounts and tools</h3>
+      <h2>Pre-flight</h2>
+      <p class="muted">Before Phase 0 starts:</p>
       <ul>
-        <li>Create a Supabase account; create the <strong>dev</strong> project (name suggestion: <code>mastodon-fridge-dev</code>).</li>
-        <li>Install the Supabase CLI: <code>npm i -g supabase</code> (or use <code>npx supabase</code>).</li>
-        <li>Get an Anthropic API key from the Anthropic console (used in Phase 5; can wait).</li>
-        <li>Sign in to the CLI: <code>supabase login</code>.</li>
+        <li>Create a Supabase account and a dev project.</li>
+        <li>Install the Supabase CLI; sign in.</li>
+        <li>Get an Anthropic API key (used in Phase 5).</li>
       </ul>
-
-      <h3 style="margin-top:14px">Repo structure to add</h3>
-<pre>mastodon-fridge/
-├── supabase/                       # NEW — created by `supabase init`
-│   ├── config.toml
-│   ├── migrations/                 # numbered SQL files
-│   └── functions/
-│       └── extract-flyer/          # Phase 5
-└── src/
-    ├── lib/
-    │   ├── supabase.ts             # NEW — client singleton
-    │   ├── auth.ts                 # NEW — sign-in helpers + dev auto-login
-    │   └── api/                    # NEW — one file per resource
-    │       ├── events.ts
-    │       ├── fridge.ts
-    │       ├── gallery.ts
-    │       ├── reports.ts
-    │       └── ai.ts
-    ├── contexts/
-    │   └── AuthContext.tsx         # NEW — wraps the app with current user
-    └── ...                         # existing screens, theme, etc.</pre>
-
-      <h3 style="margin-top:14px">npm dependencies to add (Phase 0)</h3>
-      <ul>
-        <li><code>@supabase/supabase-js</code></li>
-        <li><code>@react-native-async-storage/async-storage</code> — Supabase session persistence on RN</li>
-        <li><code>react-native-url-polyfill</code> — required for Supabase JS on RN</li>
-        <li><code>expo-image-manipulator</code> — Phase 3 client compression (can install later, but easier now)</li>
-      </ul>
-
-      <div class="callout">
-        <strong>Note:</strong> <code>react-native-gesture-handler</code> and <code>react-native-reanimated</code>
-        are not currently installed (per <code>CLAUDE.md</code>). Phase 2 fridge gestures use built-in
-        <code>PanResponder</code>; do not add gesture libraries unless a feature genuinely requires them.
-      </div>
     </section>
 
-    <!-- ============== PHASE 0 ============== -->
     <section>
       <h2>Phases</h2>
 
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">0</div>
+        <div class="phase-badge">0</div>
+        <div>
           <div class="phase-title">
             <h3>Foundation</h3>
             <span class="est">~2 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> The app boots against a real Supabase project as a real authenticated user, with
-          RLS already on, indexes already in place, and an Edge Function already deployable. No features yet —
-          just a verified rail.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li>Dev Supabase project with <code>supabase/</code> directory committed.</li>
-              <li>One migration file containing the full Phase 0 schema, RLS policies, and indexes.</li>
-              <li>Two real Auth users seeded: <code>dev1@local.test</code>, <code>dev2@local.test</code>.</li>
-              <li>Supabase client + Auth context wired into <code>App.tsx</code>.</li>
-              <li>Dev auto-login working in Expo Go and web.</li>
-              <li><code>extract-flyer</code> Edge Function deployed as a stub.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>supabase/migrations/0001_init.sql</code></li>
-              <li><strong>New:</strong> <code>supabase/functions/extract-flyer/index.ts</code></li>
-              <li><strong>New:</strong> <code>src/lib/supabase.ts</code></li>
-              <li><strong>New:</strong> <code>src/lib/auth.ts</code></li>
-              <li><strong>New:</strong> <code>src/contexts/AuthContext.tsx</code></li>
-              <li><strong>Edit:</strong> <code>App.tsx</code> (wrap with <code>AuthProvider</code>)</li>
-              <li><strong>New:</strong> <code>.env.local</code> (gitignored)</li>
-              <li><strong>Edit:</strong> <code>.gitignore</code></li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Create the Supabase dev project; copy URL and <code>anon</code> key into <code>.env.local</code>.</li>
-          <li>Run <code>supabase init</code> in the repo root; commit the generated <code>supabase/</code> tree (minus <code>.branches/</code>).</li>
-          <li>Link the local project to the dev cloud project: <code>supabase link --project-ref &lt;ref&gt;</code>.</li>
-          <li>Write <code>0001_init.sql</code>: create all six MVP tables (<code>profiles</code>, <code>events</code>, <code>fridge_items</code>, <code>gallery_media</code>, <code>media_stickers</code>, <code>media_reports</code>), enable RLS on each, write the initial policies (see "RLS starting policies" reference below), create indexes.</li>
-          <li>Apply: <code>supabase db push</code>. Verify the schema in the dashboard.</li>
-          <li>Create dev users via the dashboard Auth UI (or a separate <code>seed.sql</code>). Insert matching <code>profiles</code> rows for each.</li>
-          <li>Install npm deps; create <code>src/lib/supabase.ts</code> with the client (use AsyncStorage as the auth storage adapter, import the URL polyfill at the top of the file).</li>
-          <li>Create <code>AuthContext</code>: exposes <code>{ user, session, signIn, signOut }</code>. On mount, if <code>__DEV__</code> and the dev env vars are present, auto-call <code>signInWithPassword</code>.</li>
-          <li>Wrap <code>App.tsx</code> in <code>AuthProvider</code> inside <code>ThemeProvider</code>.</li>
-          <li>Add a temporary debug surface (e.g. log <code>session?.user.id</code> in <code>FridgeScreen</code>) to confirm sign-in works on Expo Go and web.</li>
-          <li>Scaffold <code>extract-flyer</code> Edge Function returning a hard-coded JSON shape; deploy with <code>supabase functions deploy extract-flyer</code>; set <code>ANTHROPIC_API_KEY</code> via <code>supabase secrets set</code>.</li>
-          <li><strong>Cross-user isolation test:</strong> using SQL editor, sign in as <code>dev1</code> via <code>auth.uid()</code> simulation and confirm <code>SELECT</code> against another user's <code>fridge_items</code> returns zero rows.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Cold launching Expo Go shows the user logged in within ~1 second; <code>session.user.id</code> is real.</li>
-            <li><code>supabase db push</code> applies the migration cleanly to a fresh project (verify by resetting the dev DB).</li>
-            <li>Calling the deployed Edge Function from <code>curl</code> with a user JWT returns the stub JSON.</li>
-            <li>RLS isolation test: <code>dev2</code> cannot read <code>dev1</code>'s rows in any table that has owner-only RLS.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Supabase JS on RN <strong>requires</strong> <code>react-native-url-polyfill/auto</code> imported before the client. Forgetting this surfaces as cryptic <code>URL is not defined</code> errors.</li>
-            <li>The <code>profiles</code> row for an Auth user is not created automatically. Either insert it manually for dev users, or write a Postgres trigger on <code>auth.users</code> insert. The trigger is a one-liner; do it in the same migration.</li>
-            <li>Don't enable Supabase email confirmation on dev — it blocks the seeded password sign-in.</li>
-            <li>RLS "permissive enough for testing" still means owner-only on <code>fridge_items</code> from day one; this is the table that proves your isolation actually works.</li>
-          </ul>
+          <p>
+            Stand up the Supabase dev project, full schema with RLS and indexes, two real dev Auth users, the
+            Supabase client wired into the Expo app with dev auto-login, and an Edge Function scaffold. No
+            features — just a verified rail with cross-user isolation proven.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 1 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">1</div>
+        <div class="phase-badge">1</div>
+        <div>
           <div class="phase-title">
             <h3>Events &amp; Market</h3>
             <span class="est">~3 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> Real users can create, list, search, and view events. <code>MarketScreen</code>
-          renders from Postgres, not seeds.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li><code>src/lib/api/events.ts</code> with <code>listEvents</code>, <code>getEvent</code>, <code>createEvent</code>, <code>updateEvent</code>, <code>deleteEvent</code>.</li>
-              <li><code>MarketScreen</code> wired to <code>listEvents</code> with pull-to-refresh and basic search.</li>
-              <li>An event detail screen or modal (decide based on existing nav).</li>
-              <li><code>ConfirmScreen</code> save path calls <code>createEvent</code>.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>src/lib/api/events.ts</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/MarketScreen.tsx</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/ConfirmScreen.tsx</code></li>
-              <li><strong>New (maybe):</strong> <code>src/screens/EventDetailScreen.tsx</code> + route in <code>RootNavigator</code></li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Implement <code>events.ts</code> CRUD wrappers around the Supabase client. Return typed rows; use a generated <code>Database</code> type from <code>supabase gen types typescript</code>.</li>
-          <li>Replace the mock event list in <code>MarketScreen</code> with a <code>useEffect</code> + state pattern (no server-state library yet; keep it simple).</li>
-          <li>Add pull-to-refresh and a debounced search input that re-runs <code>listEvents({ search })</code>; in the API, build an <code>.or()</code> clause with <code>title.ilike</code> and <code>description.ilike</code>.</li>
-          <li>Wire <code>ConfirmScreen</code>'s save button to <code>createEvent</code> using its existing <code>extractedTitle</code> / <code>extractedStartDate</code> / <code>extractedEndDate</code> / <code>extractedLocation</code> params, plus the captured flyer image path (uploaded in Phase 3 — for now, save without flyer image).</li>
-          <li>Add an event detail view (modal or pushed screen) that pulls <code>getEvent(id)</code>. Reuse it from <code>MarketScreen</code> taps and from fridge items in Phase 2.</li>
-          <li>Add RLS write tests: signed in as <code>dev2</code>, attempting to update an event created by <code>dev1</code> must fail.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Creating an event in <code>ConfirmScreen</code> persists it; closing the app and reopening shows the same event in Market.</li>
-            <li>Searching "yoga" filters the list to events with "yoga" in title or description.</li>
-            <li>Two devices logged in as different users see the same events.</li>
-            <li><code>dev2</code> cannot edit or delete <code>dev1</code>'s event.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Supabase returns <code>created_at</code> as ISO strings, not <code>Date</code>. Decide whether your TS types use <code>string</code> (simpler) or <code>Date</code> (parse at the API boundary).</li>
-            <li>Don't reach for React Query / SWR yet; the screens are simple enough that <code>useEffect</code> + <code>useState</code> is shorter and avoids a dependency.</li>
-          </ul>
+          <p>
+            Real users can create, list, search, and view events. <code>MarketScreen</code> renders from Postgres,
+            and <code>ConfirmScreen</code> persists. Manual events first; AI comes later.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 2 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">2</div>
+        <div class="phase-badge">2</div>
+        <div>
           <div class="phase-title">
             <h3>Fridge customization</h3>
             <span class="est">~2 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> Each user's personal fridge persists. Drag, rotate, and re-pin survive an app
-          relaunch on the same account, and another user logging in sees their own (empty) fridge.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li><code>src/lib/api/fridge.ts</code> with <code>listFridgeItems</code>, <code>upsertFridgeItem</code>, <code>removeFridgeItem</code>, <code>flushFridgeItems(items[])</code>.</li>
-              <li><code>FridgeScreen</code> reads from Postgres on mount, holds layout state in memory + <code>AsyncStorage</code>, flushes to Supabase on a 1.5s debounce + on screen blur + on app background.</li>
-              <li>"Pin to fridge" action from event detail creates a <code>fridge_items</code> row with <code>event_id</code>.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>src/lib/api/fridge.ts</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/FridgeScreen.tsx</code></li>
-              <li><strong>Edit:</strong> <code>src/data/fridgeSeed.ts</code> (likely deprecated for live data; keep the type definitions, mark seed as legacy)</li>
-              <li><strong>Edit:</strong> Whichever component currently dispatches the pin action.</li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Implement <code>fridge.ts</code> with a <code>flushFridgeItems</code> that takes a batch and uses <code>upsert</code> on <code>id</code>.</li>
-          <li>On <code>FridgeScreen</code> mount: <code>listFridgeItems()</code> filtered by the current user; merge with whatever is in <code>AsyncStorage</code> under a per-user key (local wins for unsynced edits).</li>
-          <li>Build a <code>useFridgeStore</code> hook (just <code>useReducer</code>) that holds the current items, exposes <code>moveItem</code>, <code>rotateItem</code>, <code>removeItem</code>, <code>addItem</code>; every mutation also writes to <code>AsyncStorage</code>.</li>
-          <li>Add a debounce: 1.5s after the last mutation, call <code>flushFridgeItems</code>; also flush on screen blur (<code>useFocusEffect</code> cleanup) and on <code>AppState</code> change to background.</li>
-          <li>Hook gestures via built-in <code>PanResponder</code>. Keep math simple: store position as raw <code>x</code>, <code>y</code>; ignore screen-size normalization for MVP — the fridge frame is a fixed-size container.</li>
-          <li>Add an "unpin" affordance (long-press or button) that calls <code>removeFridgeItem</code> with optimistic local removal.</li>
-          <li>Verify across two devices: pinning on device A under <code>dev1</code> appears on a fresh launch on device B under <code>dev1</code>; <code>dev2</code> sees nothing.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Drag-drop a magnet, kill the app, reopen — it stays put.</li>
-            <li>Toggling between <code>dev1</code> and <code>dev2</code> swaps the fridge contents.</li>
-            <li>Network flakiness during dragging does not lose edits (kill wifi, drag, restore wifi → eventual flush succeeds).</li>
-            <li><code>dev2</code> cannot read or modify <code>dev1</code>'s <code>fridge_items</code> via direct Supabase client calls.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Without <code>react-native-reanimated</code>, every frame is a JS-thread re-render. Throttle the <code>onPanResponderMove</code> setState to ~30fps to avoid jank on Android.</li>
-            <li>Per-user <code>AsyncStorage</code> key (e.g. <code>fridge:items:&lt;userId&gt;</code>) is mandatory — otherwise switching users on the same device leaks state.</li>
-            <li>Server-side conflict resolution is "last write wins" by row id. With one device per user this won't surface; don't build a CRDT.</li>
-          </ul>
+          <p>
+            Each user's personal fridge persists across launches. Drag, rotate, pin, and unpin work, with
+            debounced writes so a flaky network doesn't lose edits. <code>dev2</code> never sees <code>dev1</code>'s fridge.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 3 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">3</div>
+        <div class="phase-badge">3</div>
+        <div>
           <div class="phase-title">
             <h3>Storage + media safety skeleton</h3>
             <span class="est">~2 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> The app can upload a compressed image and read it back via a signed URL. The
-          security primitive ("only authenticated users can read non-removed gallery media") is enforced
-          server-side, not by the client.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li>Three private buckets created: <code>flyers</code>, <code>gallery</code>, <code>avatars</code>.</li>
-              <li>Storage RLS policies on each bucket, scoped by <code>{user_id}/</code> path prefix.</li>
-              <li>A Postgres function <code>get_signed_media_url(media_id uuid)</code> that returns a short-lived signed URL after auth + moderation checks, callable as an RPC.</li>
-              <li><code>src/lib/storage.ts</code> with <code>uploadImage(bucket, file)</code> that compresses then uploads.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>supabase/migrations/0002_storage.sql</code></li>
-              <li><strong>New:</strong> <code>src/lib/storage.ts</code></li>
-              <li><strong>Edit:</strong> Avatar upload in <code>ProfileScreen</code> (smallest scope to validate end-to-end).</li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Migration <code>0002_storage.sql</code>: create the three buckets via <code>storage.create_bucket</code>; write storage policies that allow inserts only when the path starts with <code>auth.uid()::text || '/'</code>.</li>
-          <li>Implement <code>get_signed_media_url</code>: a SQL/PLpgSQL function that takes a <code>media_id</code>, looks up <code>gallery_media</code>, ensures <code>moderation_status &lt;&gt; 'removed'</code> and <code>deleted_at IS NULL</code>, then calls <code>storage.create_signed_url</code> with a 60-minute expiry. Mark <code>SECURITY DEFINER</code> so it can read storage internals.</li>
-          <li>Implement <code>uploadImage</code>: take the raw URI, run <code>expo-image-manipulator</code> (resize to 1600px longest edge, JPEG quality 0.7), reject anything still over 5 MB, then <code>supabase.storage.from(bucket).upload(path, blob)</code>. Path follows <code>{user_id}/{uuidv4}.jpg</code>.</li>
-          <li>Validate the entire round-trip via avatar: <code>ProfileScreen</code> upload → save the path on <code>profiles.avatar_path</code> → render via a signed URL (avatars can use a long-expiry signed URL fetched on profile load).</li>
-          <li>Confirm <code>dev2</code> cannot upload to a path under <code>dev1</code>'s prefix (storage policy denies).</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Picking an avatar in <code>ProfileScreen</code> uploads &lt;1 MB regardless of original size, persists across launches, and renders.</li>
-            <li>Direct unauthenticated access to the storage object URL (no signed token) returns 403.</li>
-            <li><code>get_signed_media_url</code> for a <code>removed</code> row returns null/error — proving the moderation gate works at the server level.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Supabase Storage on RN has had repeated bugs around upload payloads; if a direct <code>upload</code> call fails on Android specifically, fall back to <code>uploadFromBase64</code> via <code>FileSystem.readAsStringAsync</code>.</li>
-            <li>Signed URLs are cacheable; if you re-render frequently, memoize the URL per <code>media_id</code> for its expiry duration to avoid burning RPC calls.</li>
-            <li>Bucket names are global to the project — pick them once, never rename.</li>
-          </ul>
+          <p>
+            Compressed image upload and signed-URL read end-to-end, validated through avatars first. The "only
+            authenticated users can read non-removed media" rule is enforced server-side, not by the client.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 4 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">4</div>
+        <div class="phase-badge">4</div>
+        <div>
           <div class="phase-title">
             <h3>Public galleries with reports</h3>
             <span class="est">~3 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> Any signed-in user can upload photos to an event gallery, view others' photos,
-          place sticker overlays, and report content. An admin can remove reported content with a single update.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li><code>src/lib/api/gallery.ts</code>: <code>listGalleryMedia</code>, <code>uploadGalleryMedia</code>, <code>placeSticker</code>, <code>reportMedia</code>.</li>
-              <li><code>EventGalleryScreen</code> wired to real data, including sticker overlays (read from <code>media_stickers</code>).</li>
-              <li>A simple admin utility — either a hidden "Admin" section in <code>ProfileScreen</code> shown only when <code>profiles.is_admin = true</code>, or just SQL snippets in a markdown file. The first is barely more work; do it.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>src/lib/api/gallery.ts</code></li>
-              <li><strong>New:</strong> <code>src/lib/api/reports.ts</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/EventGalleryScreen.tsx</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/ProfileScreen.tsx</code> (admin section)</li>
-              <li><strong>New (maybe):</strong> <code>src/screens/admin/ReportsQueueScreen.tsx</code></li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Wire <code>EventGalleryScreen</code> to <code>listGalleryMedia(eventId)</code>; render via signed URLs from <code>get_signed_media_url</code>. Pull-to-refresh, no realtime.</li>
-          <li>Add upload entry point. Use the existing <code>expo-image-picker</code> already in the package list. Reject videos client-side (<code>mediaTypes: Images</code>). Insert a <code>gallery_media</code> row with <code>moderation_status = 'approved'</code>.</li>
-          <li>Sticker placement: tap a sticker affordance, tap a position on the image; insert into <code>media_stickers</code> with <code>x_percent</code>/<code>y_percent</code>. Re-fetch overlays for the affected media.</li>
-          <li>Report flow: long-press on a photo → "Report" → reason picker (4 fixed options) → insert into <code>media_reports</code>. Show a one-time toast.</li>
-          <li>Admin queue: list <code>media_reports</code> joined to <code>gallery_media</code>; one button per row, "Remove": sets <code>moderation_status = 'removed'</code>, <code>reviewed_by = auth.uid()</code>, <code>reviewed_at = now()</code>. Auto-soft-deletes via <code>deleted_at = now()</code> on the same row.</li>
-          <li>Verify a removed photo no longer returns from <code>get_signed_media_url</code>; existing client cache should fail to fetch and the image goes blank or shows a placeholder.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Two users on two devices see each other's uploaded photos in the same event gallery.</li>
-            <li>Reports written by <code>dev2</code> show up in the admin queue when logged in as an admin.</li>
-            <li>"Remove" hides the photo from everyone's gallery within one refresh.</li>
-            <li>Stickers placed on a photo persist and render in the same relative positions across devices.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>The "approved by default" closed-beta default is set in the migration as a column default — don't reimplement it in app code.</li>
-            <li>If you use <code>FlatList</code> for the gallery, the signed URL needs to be stable across renders; otherwise images flicker on every state update.</li>
-            <li>Large photos uploaded over slow networks can time out. Set a reasonable <code>uploadTimeout</code> and surface failures to the user; don't silently retry.</li>
-          </ul>
+          <p>
+            Users upload to event galleries, place sticker overlays, and report content. An admin can remove
+            reported media. Closed-beta default keeps uploads visible immediately; reports are reactive.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 5 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">5</div>
+        <div class="phase-badge">5</div>
+        <div>
           <div class="phase-title">
             <h3>AI flyer extraction</h3>
             <span class="est">~3 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> A user scans a flyer; the Edge Function returns structured event fields; the
-          <code>ConfirmScreen</code> fills in but always allows manual correction.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li>Real <code>extract-flyer</code> Edge Function that calls Claude Haiku 4.5 with the image and a strict JSON-output prompt.</li>
-              <li>Server-side rate limit: 20 extractions per user per day, enforced via an <code>ai_extractions</code> log table.</li>
-              <li><code>src/lib/api/ai.ts</code> wrapping the function call.</li>
-              <li><code>ScanScreen</code> calls the function with the captured image; <code>ConfirmScreen</code> consumes the response.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>Edit:</strong> <code>supabase/functions/extract-flyer/index.ts</code></li>
-              <li><strong>New:</strong> <code>supabase/migrations/0003_ai_extractions.sql</code></li>
-              <li><strong>New:</strong> <code>src/lib/api/ai.ts</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/ScanScreen.tsx</code></li>
-              <li><strong>Edit:</strong> <code>src/screens/ConfirmScreen.tsx</code> (handle low-confidence fields)</li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Migration <code>0003_ai_extractions.sql</code>: <code>ai_extractions(id, user_id, created_at, model, success)</code> with an index on <code>(user_id, created_at)</code> for the rate-limit count.</li>
-          <li>Edge Function: receive base64 image (or signed URL), check today's count for the user — fail with 429 if &gt;= 20. Call <code>anthropic.messages.create</code> with <code>claude-haiku-4-5-20251001</code>, vision input, and a system prompt that demands strict JSON: <code>{ title, description, starts_at, ends_at, location, confidence: { ... per field } }</code>.</li>
-          <li>Validate the response shape with a small JSON-schema validator (or hand-rolled checks). Insert an <code>ai_extractions</code> row regardless of outcome (so failures still count toward the daily limit, preventing abuse via failed calls).</li>
-          <li><code>ScanScreen</code>: after capture and compression, upload the image to <code>flyers/{user_id}/{uuid}.jpg</code>, then call the Edge Function with the storage path; the function fetches the image via signed URL.</li>
-          <li><code>ConfirmScreen</code>: render fields with low <code>confidence</code> as visually distinct (subtle warning style) and pre-focused for editing.</li>
-          <li>Test against 20–30 real PFW flyers (the user can take photos around campus). Track field accuracy. If it's below ~85%, swap model to <code>claude-sonnet-4-6</code> in the function — no client changes needed.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>End-to-end scan returns structured fields in &lt; 6 seconds on a normal mobile network.</li>
-            <li>Hitting the rate limit (21st call in a day) returns a clear "you've reached today's limit" error in the UI.</li>
-            <li>The function never crashes on malformed model output; it returns a graceful fallback (<code>{ confidence.all: 0 }</code>) so the user can fill the form by hand.</li>
-            <li>Anthropic key is reachable only from the function — the Expo bundle is searched and contains no <code>sk-ant-</code> string.</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Don't pass the raw image bytes through the Expo bundle to the function as base64; it bloats the payload. Upload to storage first, send the path, let the function fetch.</li>
-            <li>Edge Functions cold-start on Deno (~300ms after idle). Keep one keep-warm cron <em>only if</em> latency complaints surface in user testing — otherwise live with it.</li>
-            <li>Claude vision can hallucinate dates that "sound campus-y" (next Friday, etc.). The system prompt should explicitly say "if a field is not visible in the image, set its confidence to 0 and the value to null." Verify this with adversarial flyers.</li>
-          </ul>
+          <p>
+            Scan flow returns structured event fields from a real Claude Haiku 4.5 Edge Function. Rate-limited
+            per user per day. <code>ConfirmScreen</code> always allows manual correction; low-confidence fields
+            are highlighted.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 6 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">6</div>
+        <div class="phase-badge">6</div>
+        <div>
           <div class="phase-title">
             <h3>Production auth + prod project</h3>
             <span class="est">~3 days</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> Ship a production Supabase project with Google sign-in. Optional
-          <code>@pfw.edu</code> magic-link verification stores a badge on the profile but never gates writes.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li>New <code>mastodon-fridge-prod</code> Supabase project with all migrations applied.</li>
-              <li>Google OAuth provider configured in Supabase Auth.</li>
-              <li><code>EntryScreen</code> ("Sign in with Google") working in dev builds against prod project.</li>
-              <li>Optional PFW magic-link flow (Edge Function + transactional email provider).</li>
-              <li>Per-build env switching (dev project for development, prod project for prod builds).</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>Edit:</strong> <code>src/lib/auth.ts</code> — add real Google sign-in path; gate dev auto-login on <code>__DEV__ &amp;&amp; isDevProject</code>.</li>
-              <li><strong>Edit:</strong> <code>src/screens/EntryScreen.tsx</code> — replace placeholder buttons.</li>
-              <li><strong>Edit:</strong> <code>src/screens/ProfileScreen.tsx</code> — "Verify PFW" affordance.</li>
-              <li><strong>New:</strong> <code>supabase/functions/send-pfw-otp/index.ts</code></li>
-              <li><strong>New:</strong> <code>supabase/functions/verify-pfw-otp/index.ts</code> (or one combined function)</li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Create the prod Supabase project. Apply all migrations (<code>supabase db push --project-ref &lt;prod&gt;</code>).</li>
-          <li>Set up a Google Cloud OAuth client (Web + iOS + Android). Add the redirect URLs Supabase requires. Configure the Google provider in Supabase Auth.</li>
-          <li>In <code>auth.ts</code>, implement <code>signInWithGoogle</code> using <code>supabase.auth.signInWithOAuth({ provider: 'google' })</code>; on web it redirects, on native it uses <code>WebBrowser.openAuthSessionAsync</code> via <code>expo-auth-session</code> if needed.</li>
-          <li>Add a <code>handle_new_user</code> trigger (or update the existing one) that auto-creates a <code>profiles</code> row whenever a new <code>auth.users</code> row is inserted.</li>
-          <li>Pick a transactional email provider — recommend <strong>Resend</strong> (cleaner API for one-off email). Get an API key, set it via <code>supabase secrets set</code>.</li>
-          <li>Implement the PFW OTP flow. Two options that both work:
-            <ul>
-              <li><strong>(A)</strong> Custom token: <code>send-pfw-otp</code> emails a 6-digit code, stored hashed in a <code>pfw_otp(profile_id, code_hash, expires_at)</code> table. <code>verify-pfw-otp</code> compares.</li>
-              <li><strong>(B)</strong> Magic link: <code>send-pfw-otp</code> generates a signed token (JWT-ish) and emails a deep link; tapping it hits a verify endpoint that updates <code>pfw_verified_at</code>.</li>
-            </ul>
-            Either is fine; (A) is slightly simpler for mobile-only entry.</li>
-          <li>The verify endpoint must enforce the email is on the <code>pfw.edu</code> domain. Reject anything else with a clear error.</li>
-          <li>Ship the "Verify PFW" affordance in <code>ProfileScreen</code> with a "Verified PFW Don" badge once <code>pfw_verified_at</code> is set.</li>
-          <li>Run the entire dev → prod flow in a clean install: install the app, sign in with a real Google account, optionally verify PFW email, create an event, upload a photo. End-to-end on prod data.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>Cold install + Google sign-in + first event creation works on iOS Simulator, Android Emulator, and web.</li>
-            <li>The user record exists in <code>auth.users</code> and the matching <code>profiles</code> row exists with correct defaults.</li>
-            <li>Verifying with a real <code>@pfw.edu</code> email sets <code>pfw_verified_at</code> and shows the badge.</li>
-            <li>Trying to verify with a non-PFW email fails with a clear message.</li>
-            <li>Dev auto-login is impossible in production builds (dev env vars are not bundled).</li>
-          </ul>
-        </div>
-
-        <div class="gotcha">
-          <h4>Gotchas</h4>
-          <ul>
-            <li>Native OAuth redirect URIs are the most common production-blocking bug. Test on a real device before declaring this phase done — simulators sometimes succeed where physical phones fail.</li>
-            <li>Supabase's OAuth flow on iOS requires you to register a custom URL scheme in <code>app.json</code>. Add it before testing.</li>
-            <li>Google's account picker on Expo Web sometimes opens in a popup blocked by browser settings; document the workaround in the README.</li>
-            <li>If using Resend, configure SPF/DKIM on the sending domain or all OTP emails go to spam. Free Resend has a sandbox mode that avoids this for early testing — use it.</li>
-          </ul>
+          <p>
+            Production Supabase project with Google sign-in. Optional <code>@pfw.edu</code> magic-link verification
+            sets a badge on the profile but never gates writes. Dev auto-login becomes impossible in production
+            builds.
+          </p>
         </div>
       </div>
 
-      <!-- ============== PHASE 7 ============== -->
       <div class="phase">
-        <div class="phase-head">
-          <div class="phase-badge">7</div>
+        <div class="phase-badge">7</div>
+        <div>
           <div class="phase-title">
             <h3>Ship gate</h3>
             <span class="est">~1 day</span>
           </div>
-        </div>
-
-        <div class="goal">
-          <strong>Goal:</strong> Final gate before letting any of the 50 invited users in. Audit, document,
-          confirm.
-        </div>
-
-        <div class="subgrid">
-          <div>
-            <h4>Deliverables</h4>
-            <ul>
-              <li>RLS audit script (a single <code>.ts</code> or <code>.sql</code> file) that signs in as <code>dev2</code> and attempts forbidden access against <code>dev1</code>'s rows. Must produce zero successful unauthorized reads or writes.</li>
-              <li>Storage usage check on prod: under 200 MB at zero real users; alarm wired at 750 MB (Supabase webhook to email/Discord).</li>
-              <li>Updated <code>CLAUDE.md</code> and <code>AGENTS.md</code>: Firebase removed, Supabase added, dev-auth flow described.</li>
-              <li>Backup posture documented: free-tier behavior, Pro upgrade trigger.</li>
-              <li>An "admin runbook" markdown file with: how to remove a piece of media, how to grant <code>is_admin</code>, how to read function logs, how to roll back a migration.</li>
-            </ul>
-          </div>
-          <div>
-            <h4>Files touched</h4>
-            <ul>
-              <li><strong>New:</strong> <code>scripts/rls-audit.ts</code></li>
-              <li><strong>Edit:</strong> <code>CLAUDE.md</code></li>
-              <li><strong>Edit:</strong> <code>AGENTS.md</code> (if exists)</li>
-              <li><strong>New:</strong> <code>docs/admin-runbook.md</code></li>
-              <li><strong>New:</strong> <code>docs/backups.md</code></li>
-            </ul>
-          </div>
-        </div>
-
-        <h4 style="margin-top:14px">Order of operations</h4>
-        <ol class="step-list">
-          <li>Write <code>rls-audit.ts</code>: it signs in as <code>dev2</code>, then attempts ~12 operations (read/update/delete on each user-owned table targeting <code>dev1</code>'s rows). Asserts every one fails with a permission error. Run it as part of "is the dev project still safe" checks.</li>
-          <li>Configure a Supabase storage usage webhook or a tiny scheduled function that emails when usage crosses 750 MB.</li>
-          <li>Update <code>CLAUDE.md</code>: tech stack changes from "Firebase Auth (planned), Claude Vision API (planned for backend)" to "Supabase (Postgres, Auth, Storage, Edge Functions); Anthropic Claude Haiku 4.5 via Edge Function for flyer extraction." Add the dev-auth section.</li>
-          <li>Write the runbook: 1-page sections on each operational task. Include exact SQL snippets for the manual moderation removal and admin granting.</li>
-          <li>Run the entire ship-gate checklist from <code>final-decision.html</code> manually. If anything fails, do not invite users until it's fixed.</li>
-        </ol>
-
-        <div class="acceptance">
-          <h4>Done when</h4>
-          <ul>
-            <li>The full ship-gate checklist (8 items in <code>final-decision.html</code>) passes.</li>
-            <li>RLS audit script outputs <strong>0</strong> failed assertions.</li>
-            <li>Documentation is current; a teammate could onboard from the repo without verbal context.</li>
-            <li>Invitations to the first cohort can go out.</li>
-          </ul>
+          <p>
+            Final audit before letting any of the 50 invited users in. RLS audit script, storage usage check,
+            updated docs (<code>CLAUDE.md</code>, <code>AGENTS.md</code>), backup posture confirmed, admin
+            runbook written.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- ============== REFERENCES ============== -->
     <section>
-      <h2>Reference — RLS starting policies</h2>
-      <p class="muted">
-        The actual SQL is for the model to generate at Phase 0 build time, but here's the policy intent table to
-        check generated SQL against:
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>Table</th>
-            <th>SELECT</th>
-            <th>INSERT</th>
-            <th>UPDATE</th>
-            <th>DELETE</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>profiles</code></td>
-            <td>any authenticated user (limited columns)</td>
-            <td>via trigger only</td>
-            <td>self only</td>
-            <td>none (account deletion is admin-only)</td>
-          </tr>
-          <tr>
-            <td><code>events</code></td>
-            <td>any authenticated, <code>deleted_at IS NULL</code></td>
-            <td><code>created_by = auth.uid()</code></td>
-            <td><code>created_by = auth.uid()</code></td>
-            <td><code>created_by = auth.uid()</code> (sets <code>deleted_at</code>)</td>
-          </tr>
-          <tr>
-            <td><code>fridge_items</code></td>
-            <td><code>user_id = auth.uid()</code></td>
-            <td><code>user_id = auth.uid()</code></td>
-            <td><code>user_id = auth.uid()</code></td>
-            <td><code>user_id = auth.uid()</code></td>
-          </tr>
-          <tr>
-            <td><code>gallery_media</code></td>
-            <td>auth + <code>moderation_status &lt;&gt; 'removed'</code> + <code>deleted_at IS NULL</code></td>
-            <td><code>uploaded_by = auth.uid()</code></td>
-            <td>self (own row) OR <code>is_admin</code></td>
-            <td>self (own row) OR <code>is_admin</code></td>
-          </tr>
-          <tr>
-            <td><code>media_stickers</code></td>
-            <td>any authenticated</td>
-            <td><code>placed_by = auth.uid()</code></td>
-            <td><code>placed_by = auth.uid()</code></td>
-            <td><code>placed_by = auth.uid()</code></td>
-          </tr>
-          <tr>
-            <td><code>media_reports</code></td>
-            <td><code>is_admin</code> only</td>
-            <td><code>reporter_id = auth.uid()</code></td>
-            <td><code>is_admin</code> only</td>
-            <td>none</td>
-          </tr>
-          <tr>
-            <td><code>ai_extractions</code></td>
-            <td><code>user_id = auth.uid()</code></td>
-            <td>via Edge Function (service role)</td>
-            <td>none</td>
-            <td>none</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h2>Reference — daily working loop</h2>
+      <h2>Daily loop</h2>
       <p>
-        For each phase, the practical loop looks like this:
+        Open this doc, read the next phase's overview, hand the model the goal plus relevant existing screens, and
+        let it plan and build the actual steps. Run <code>npm run lint</code> after TypeScript edits. Apply Supabase
+        changes through numbered migration files in <code>supabase/migrations/</code>; never edit the dev database
+        through the dashboard for schema changes.
       </p>
-      <ol>
-        <li>Open this document. Read the phase's <strong>Goal</strong> and <strong>Order of operations</strong>.</li>
-        <li>Open the model with: the phase's deliverables, the listed files, and the relevant existing screens. Ask it to implement the next 1–2 steps.</li>
-        <li>Run <code>npm run lint</code> after every step that touches TypeScript.</li>
-        <li>For Supabase changes: write the SQL into a numbered migration file in <code>supabase/migrations/</code>; apply with <code>supabase db push</code>; never edit the dev database directly via the dashboard for schema changes.</li>
-        <li>For Edge Function changes: <code>supabase functions deploy &lt;name&gt;</code>, then call from the app or curl with a real user JWT.</li>
-        <li>At the end of the phase, run the <strong>Done when</strong> checklist by hand. Don't move on until every box is real.</li>
-      </ol>
       <div class="callout ok">
-        <strong>One rule:</strong> Don't go back to a previous phase to "improve" it once you've left. Note the
-        improvement in a <code>BACKLOG.md</code> and revisit after the ship gate. The MVP isn't done until all
-        seven phases are done; partial perfection on Phase 2 doesn't count.
+        <strong>One rule:</strong> Don't go back to polish a previous phase mid-build. Note improvements in a
+        <code>BACKLOG.md</code> and revisit after the ship gate. The MVP isn't done until all seven phases are done.
       </div>
-    </section>
-
-    <section>
-      <h2>What you do <em>not</em> need to plan now</h2>
-      <p class="muted">
-        These are the things that look like they need planning but are better answered by the model at build time
-        with the live codebase in hand:
-      </p>
-      <ul>
-        <li>Exact SQL for migrations (Phase 0, 2, 3, 5).</li>
-        <li>Exact TypeScript shape of the API wrappers — generate from <code>supabase gen types typescript</code>.</li>
-        <li>Exact gesture math for fridge dragging (Phase 2). Standard <code>PanResponder</code> recipe.</li>
-        <li>Exact Anthropic prompt for flyer extraction (Phase 5). Iterate against real flyers.</li>
-        <li>Exact Resend email template (Phase 6). Plain text is fine.</li>
-        <li>Exact admin UI — a <code>FlatList</code> + one button is enough.</li>
-      </ul>
-      <p>
-        If you find yourself writing more planning instead of building, that is the signal to stop and start
-        Phase 0.
-      </p>
     </section>
 
     <p class="footer-note">
-      Companion to <code>final-decision.html</code>. Phases land sequentially; each unlocks the next. The MVP is
-      done when Phase 7 is done, not before.
+      Companion to <code>final-decision.html</code>. Phases land sequentially; each unlocks the next.
     </p>
   </main>
 </body>
