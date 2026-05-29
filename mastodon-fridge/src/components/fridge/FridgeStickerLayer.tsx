@@ -35,7 +35,10 @@ export default function FridgeStickerLayer({
   if (width <= 0 || items.length === 0) return null;
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View
+      style={[StyleSheet.absoluteFill, styles.layer]}
+      pointerEvents="none"
+    >
       {items.map((item) => {
         const left = item.xPct * width - item.size / 2;
         const top = item.y - item.size / 2;
@@ -62,10 +65,19 @@ export default function FridgeStickerLayer({
   );
 }
 
+/** Above all shelf items (max shelf elevation is 8 on Android). */
+const PIN_Z = 999;
+
 const styles = StyleSheet.create({
+  layer: {
+    zIndex: PIN_Z,
+    elevation: PIN_Z,
+  },
   item: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: PIN_Z,
+    elevation: PIN_Z,
   },
 });
