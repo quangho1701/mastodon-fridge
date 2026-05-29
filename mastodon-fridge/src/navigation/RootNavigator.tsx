@@ -1,4 +1,5 @@
 import React from 'react';
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import OnboardingScreen from '../screens/OnboardingScreen';
@@ -6,10 +7,12 @@ import EntryScreen from '../screens/EntryScreen';
 import ConfirmScreen from '../screens/ConfirmScreen';
 import EventGalleryScreen from '../screens/EventGalleryScreen';
 
+import type { TabParamList } from './TabNavigator';
+
 export type RootStackParamList = {
   Onboarding: undefined;
   Entry: undefined;
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<TabParamList> | undefined;
   Confirm: {
     imageUri?: string;
     extractedTitle?: string;

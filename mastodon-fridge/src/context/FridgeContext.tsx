@@ -7,6 +7,11 @@ import React, {
 } from 'react';
 import type { StickerSelection } from '../components/StickerPickerModal';
 
+/** Where a placement draft / committed sticker came from (optional). */
+export type PlacementSource =
+  | { kind: 'scan' }
+  | { kind: 'market'; eventId: string };
+
 /**
  * A sticker/magnet/emoji the user has pinned to their PERSONAL fridge.
  * X is a 0..1 fraction of the door width (no horizontal scroll), while Y is an
@@ -19,6 +24,7 @@ export type PlacedSticker = {
   id: string;
   selection: StickerSelection;
   sourceTitle: string;
+  source?: PlacementSource;
   /** 0..1 — center X as a fraction of the fridge door width. */
   xPct: number;
   /** Absolute center Y in pixels within the scroll content. */
@@ -31,15 +37,26 @@ export type PlacedSticker = {
 type PlacementDraft = {
   selection: StickerSelection;
   sourceTitle: string;
+  source?: PlacementSource;
+  /** When set, committing updates this placed sticker instead of appending. */
+  repositionOfId?: string;
 } | null;
 
 interface FridgeContextValue {
   placed: PlacedSticker[];
   draft: PlacementDraft;
-  beginPlacement: (selection: StickerSelection, sourceTitle: string) => void;
+  beginPlacement: (
+    selection: StickerSelection,
+    sourceTitle: string,
+    source?: PlacementSource,
+  ) => void;
+  /** Double-tap an existing pin: same ghost flow, commit updates that item. */
+  beginReposition: (item: PlacedSticker) => void;
   commitPlacement: (xPct: number, y: number) => void;
   cancelPlacement: () => void;
   removePlaced: (id: string) => void;
+  /** Remove all committed pins that came from a Market event (unpin from fridge). */
+  removePlacedForMarketEvent: (eventId: string) => void;
 }
 
 const FridgeContext = createContext<FridgeContextValue | undefined>(undefined);
@@ -62,19 +79,50 @@ export function FridgeProvider({ children }: { children: React.ReactNode }) {
   const [draft, setDraft] = useState<PlacementDraft>(null);
 
   const beginPlacement = useCallback(
-    (selection: StickerSelection, sourceTitle: string) => {
-      setDraft({ selection, sourceTitle });
+    (
+      selection: StickerSelection,
+      sourceTitle: string,
+      source?: PlacementSource,
+    ) => {
+      setDraft({ selection, sourceTitle, source });
     },
     [],
   );
 
+  const beginReposition = useCallback((item: PlacedSticker) => {
+    setDraft({
+      selection: item.selection,
+      sourceTitle: item.sourceTitle,
+      source: item.source,
+      repositionOfId: item.id,
+    });
+  }, []);
+
   const commitPlacement = useCallback(
     (xPct: number, y: number) => {
       if (!draft) return;
+      const rid = draft.repositionOfId;
+      if (rid) {
+        setPlaced((prev) =>
+          prev.map((p) =>
+            p.id === rid
+              ? {
+                  ...p,
+                  xPct,
+                  y,
+                  rotation: randomRotation(),
+                }
+              : p,
+          ),
+        );
+        setDraft(null);
+        return;
+      }
       const item: PlacedSticker = {
         id: nextId(),
         selection: draft.selection,
         sourceTitle: draft.sourceTitle,
+        source: draft.source,
         xPct,
         y,
         rotation: randomRotation(),
@@ -94,22 +142,38 @@ export function FridgeProvider({ children }: { children: React.ReactNode }) {
     setPlaced((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
+  const removePlacedForMarketEvent = useCallback((eventId: string) => {
+    setPlaced((prev) =>
+      prev.filter(
+        (p) =>
+          !(
+            p.source?.kind === 'market' &&
+            p.source.eventId === eventId
+          ),
+      ),
+    );
+  }, []);
+
   const value = useMemo<FridgeContextValue>(
     () => ({
       placed,
       draft,
       beginPlacement,
+      beginReposition,
       commitPlacement,
       cancelPlacement,
       removePlaced,
+      removePlacedForMarketEvent,
     }),
     [
       placed,
       draft,
       beginPlacement,
+      beginReposition,
       commitPlacement,
       cancelPlacement,
       removePlaced,
+      removePlacedForMarketEvent,
     ],
   );
 

@@ -22,21 +22,36 @@ import SearchBar from '../components/market/SearchBar';
 import CategoryChipRow from '../components/market/CategoryChipRow';
 import MarketFlyerCard from '../components/market/MarketFlyerCard';
 import MarketToast from '../components/market/MarketToast';
+import { useFridge } from '../context/FridgeContext';
+import type { StickerSelection } from '../components/StickerPickerModal';
 
 const SCREEN_PAD = 16;
 const COL_GAP = 12;
+
+/** Same visual as QuickPinButton on Market cards — gold magnet on personal fridge. */
+const MARKET_PIN_SELECTION: StickerSelection = {
+  kind: 'magnet',
+  variant: 'gold',
+  label: 'Gold',
+};
 
 export default function MarketScreen() {
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const {
+    placed,
+    draft,
+    beginPlacement,
+    cancelPlacement,
+    removePlacedForMarketEvent,
+  } = useFridge();
 
   const cardWidth = (screenWidth - 2 * SCREEN_PAD - COL_GAP) / 2;
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<MarketFilter>('All');
-  const [pinned, setPinned] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState({ visible: false, message: '' });
 
   const filtered = useMemo(() => {
@@ -53,24 +68,62 @@ export default function MarketScreen() {
     });
   }, [query, category]);
 
-  const onPin = useCallback((id: string) => {
-    setPinned(prev => {
-      const next = new Set(prev);
-      const wasPinned = next.has(id);
-      if (wasPinned) {
-        next.delete(id);
-      } else {
-        next.add(id);
+  const isMarketEventPinned = useCallback(
+    (eventId: string) =>
+      placed.some(
+        (p) =>
+          p.source?.kind === 'market' && p.source.eventId === eventId,
+      ) ||
+      (draft?.source?.kind === 'market' &&
+        draft.source.eventId === eventId),
+    [placed, draft],
+  );
+
+  const onPin = useCallback(
+    (id: string) => {
+      const flyer = MARKET_FLYERS.find((f) => f.id === id);
+      if (!flyer) return;
+
+      const hasCommitted = placed.some(
+        (p) =>
+          p.source?.kind === 'market' && p.source.eventId === id,
+      );
+      const hasDraftForThis =
+        draft?.source?.kind === 'market' && draft.source.eventId === id;
+
+      if (hasCommitted) {
+        removePlacedForMarketEvent(id);
+        setToast({
+          visible: true,
+          message: 'Removed from your fridge.',
+        });
+        return;
       }
-      setToast({
-        visible: true,
-        message: wasPinned
-          ? 'Removed from your fridge.'
-          : "Pinned to your fridge. See you there, Mastodon.",
+
+      if (hasDraftForThis) {
+        cancelPlacement();
+        return;
+      }
+
+      if (draft) {
+        cancelPlacement();
+      }
+
+      beginPlacement(MARKET_PIN_SELECTION, flyer.title, {
+        kind: 'market',
+        eventId: flyer.id,
       });
-      return next;
-    });
-  }, []);
+      navigation.navigate('MainTabs', { screen: 'Fridge' });
+    },
+    [
+      placed,
+      draft,
+      beginPlacement,
+      cancelPlacement,
+      removePlacedForMarketEvent,
+      navigation,
+    ],
+  );
 
   const resetToast = useCallback(() => {
     setToast({ visible: false, message: '' });
@@ -146,7 +199,7 @@ export default function MarketScreen() {
                 key={f.id}
                 flyer={f}
                 width={cardWidth}
-                isPinned={pinned.has(f.id)}
+                isPinned={isMarketEventPinned(f.id)}
                 onPin={onPin}
                 onPress={id => navigation.navigate('EventGallery', { eventId: id })}
               />
