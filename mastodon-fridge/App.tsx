@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './src/theme';
+import { FridgeProvider } from './src/context/FridgeContext';
 import RootNavigator from './src/navigation/RootNavigator';
 
 function AppInner() {
@@ -20,7 +21,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AppInner />
+        <FridgeProvider>
+          <AppInner />
+        </FridgeProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

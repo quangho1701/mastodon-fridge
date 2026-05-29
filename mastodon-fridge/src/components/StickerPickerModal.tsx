@@ -312,7 +312,7 @@ export default function StickerPickerModal({
 
           {/* Action Button */}
           <MagnetButton
-            title="ADD TO FRIDGE"
+            title="PLACE ON FRIDGE"
             onPress={handleConfirm}
             disabled={!selected}
             style={{ marginTop: theme.spacing.md }}

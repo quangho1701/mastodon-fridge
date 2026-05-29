@@ -18,6 +18,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../theme';
+import { useFridge } from '../context/FridgeContext';
 import type { RootStackParamList } from '../navigation/RootNavigator';
 import FlyerCard from '../components/FlyerCard';
 import MagnetButton from '../components/MagnetButton';
@@ -39,6 +40,7 @@ export default function ConfirmScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<ConfirmScreenProps['route']>();
+  const { beginPlacement } = useFridge();
 
   const extractedTitle = route.params?.extractedTitle || MOCK_EVENT.title;
   const extractedDate = route.params?.extractedDate || MOCK_EVENT.dateLabel;
@@ -90,16 +92,11 @@ export default function ConfirmScreen() {
   };
 
   const handleConfirmSticker = (selection: StickerSelection) => {
-    console.log('[ConfirmScreen] Sticker selected:', selection.label);
-    Alert.alert('Success!', `Pinned "${title}" to your Fridge!`, [
-      {
-        text: 'OK',
-        onPress: () => {
-          setShowStickerPicker(false);
-          navigation.navigate('MainTabs');
-        },
-      },
-    ]);
+    // Hand off to the placement step: the picked sticker becomes a draft that
+    // the personal FridgeScreen renders as a draggable ghost to position.
+    beginPlacement(selection, title);
+    setShowStickerPicker(false);
+    navigation.navigate('MainTabs');
   };
 
   return (
