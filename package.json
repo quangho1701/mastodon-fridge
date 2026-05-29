@@ -1,4 +1,15 @@
 {
+  "name": "mastodon-fridge-workspace",
+  "private": true,
+  "main": "mastodon-fridge/index.ts",
+  "scripts": {
+    "start": "npm --prefix mastodon-fridge start",
+    "android": "npm --prefix mastodon-fridge run android",
+    "ios": "npm --prefix mastodon-fridge run ios",
+    "web": "npm --prefix mastodon-fridge run web",
+    "lint": "npm --prefix mastodon-fridge run lint",
+    "test": "npm --prefix mastodon-fridge test"
+  },
   "devDependencies": {
     "puppeteer": "^24.42.0"
   }
